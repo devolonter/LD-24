@@ -1,0 +1,3 @@
+[submodule "flixel"]
+	path = flixel
+	url = git@github.com:devolonter/flixel-monkey.git
