@@ -12,7 +12,7 @@ Class PlayState Extends FlxState
 
 	Field codeEditor:CodeEditor
 
-	Method Create:Void()		
+	Method Create:Void()
 		FlxG.Camera.Width = TILE_SIZE * FIELD_SIZE
 		FlxG.Camera.Height = FlxG.Camera.Width
 
@@ -22,8 +22,8 @@ Class PlayState Extends FlxState
 		FlxG.AddCamera(consoleCamera)
 		FlxG.AddCamera(toolboxCamera)
 		
-		Local commonCamera:FlxCamera = New FlxCamera(0, 0, FlxG.Width, FlxG.Height)
-		FlxG.AddCamera(commonCamera)
+		Local layoutCamera:FlxCamera = New FlxCamera(0, 0, FlxG.Width, FlxG.Height)
+		FlxG.AddCamera(layoutCamera)
 	End Method
 	
 	Method Update:Void()	
