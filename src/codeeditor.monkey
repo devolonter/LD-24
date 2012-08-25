@@ -2,6 +2,8 @@ Strict
 
 Import flixel
 
+Import assets
+
 Class CodeEditor Extends FlxGroup
 
 	Field x:Float
@@ -18,7 +20,9 @@ Class CodeEditor Extends FlxGroup
 		Self.width = width
 		Self.height = height
 		
-		
+		Local title:FlxText = New FlxText(x + 10, y + 10, width - 20, "MICRO EVO IDE V24 LD:")
+		title.SetFormat(Assets.FONT_PROFONT, 18)
+		Add(title)
 	End Method
 
 End Class
