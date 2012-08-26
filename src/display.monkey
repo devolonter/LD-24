@@ -2,6 +2,8 @@ Strict
 
 Import flixel
 
+Import assets
+
 Class Display Extends FlxGroup Implements FlxTweenListener
 
 	Field width:Float
@@ -15,6 +17,8 @@ Private
 		Cameras =[camera.ID]
 		width = camera.Width
 		height = camera.Height
+		
+		Add(New FlxSprite(0, 0, Assets.SPRITE_DISPLAY_MAIN))
 		
 		_hertzLine = New FlxSprite(0, camera.Height)
 		_hertzLine.MakeGraphic(camera.Width, camera.Height * 0.25)

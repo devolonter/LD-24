@@ -26,6 +26,8 @@ Private
 		proFont.SetPath(18, "fonts/profont_" + 18 + ".txt")
 		
 		FlxAssetsManager.AddImage(Assets.SPRITE_LAYOUT, "images/layout_b.png")
+		FlxAssetsManager.AddImage(Assets.SPRITE_DISPLAY_MAIN, "images/display/main.png")
+		FlxAssetsManager.AddImage(Assets.SPRITE_DISPLAY_CONSOLE, "images/display/console.png")
 	End Method
 	
 	Method OnUpdate:Int()

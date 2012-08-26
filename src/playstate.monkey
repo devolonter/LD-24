@@ -5,6 +5,7 @@ Import flixel
 Import codeeditor
 Import layout
 Import display
+Import console
 
 Class PlayState Extends FlxState
 
@@ -25,12 +26,12 @@ Class PlayState Extends FlxState
 		Local consoleCamera:FlxCamera = New FlxCamera(454, 111, 171, 260)
 		FlxG.AddCamera(consoleCamera)
 		
+		Add(New Console(consoleCamera))
+		
 		Local layoutCamera:FlxCamera = New FlxCamera(0, 0, FlxG.Width, FlxG.Height)
 		FlxG.AddCamera(layoutCamera)
 		
 		Add(New Layout(layoutCamera))
-		
-		FlxG.Camera.BgColor = $FF12231E
 	End Method
 	
 	Method Update:Void()	
