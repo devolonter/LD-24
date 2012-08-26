@@ -14,7 +14,7 @@ Private
 	Field _inputManager:InputManager
 	
 	Method New()
-		Super.New(480, 480, GetClass("PlayState"),,, 60, True)
+		Super.New(640, 480, GetClass("PlayState"),,, 60, True)
 		_inputManager = InputManager.GetInstance()
 	End Method
 	
@@ -24,6 +24,8 @@ Private
 		
 		Local proFont:FlxFont = FlxAssetsManager.AddFont(Assets.FONT_PROFONT, FlxText.DRIVER_FONTMACHINE)
 		proFont.SetPath(18, "fonts/profont_" + 18 + ".txt")
+		
+		FlxAssetsManager.AddImage(Assets.SPRITE_LAYOUT, "images/layout.png")
 	End Method
 	
 	Method OnUpdate:Int()
