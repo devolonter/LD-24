@@ -22,17 +22,15 @@ Class PlayState Extends FlxState
 		
 		Add(New Display(FlxG.Camera))
 
-		'Local consoleCamera:FlxCamera = New FlxCamera(0, FlxG.Camera.Height, FlxG.Width, FlxG.Height - FlxG.Camera.Height)
-		'Local toolboxCamera:FlxCamera = New FlxCamera(FlxG.Camera.Width, 0, FlxG.Width - FlxG.Camera.Width, FlxG.Height - consoleCamera.Height)
-		
-		'FlxG.AddCamera(consoleCamera)
-		'FlxG.AddCamera(toolboxCamera)
+		Local consoleCamera:FlxCamera = New FlxCamera(454, 111, 171, 260)
+		FlxG.AddCamera(consoleCamera)
 		
 		Local layoutCamera:FlxCamera = New FlxCamera(0, 0, FlxG.Width, FlxG.Height)
 		FlxG.AddCamera(layoutCamera)
 		
 		Add(New Layout(layoutCamera))
-		FlxG.Camera.BgColor = $FF12231e
+		
+		FlxG.Camera.BgColor = $FF12231E
 	End Method
 	
 	Method Update:Void()	

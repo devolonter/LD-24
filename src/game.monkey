@@ -25,7 +25,7 @@ Private
 		Local proFont:FlxFont = FlxAssetsManager.AddFont(Assets.FONT_PROFONT, FlxText.DRIVER_FONTMACHINE)
 		proFont.SetPath(18, "fonts/profont_" + 18 + ".txt")
 		
-		FlxAssetsManager.AddImage(Assets.SPRITE_LAYOUT, "images/layout.png")
+		FlxAssetsManager.AddImage(Assets.SPRITE_LAYOUT, "images/layout_b.png")
 	End Method
 	
 	Method OnUpdate:Int()
