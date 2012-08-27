@@ -16,5 +16,9 @@ Public
 		_map.LoadMap(FlxAssetsManager.GetString("level_1"), Assets.TILESET, PlayState.TILE_SIZE, PlayState.TILE_SIZE,, 0, 0, 3)		
 		Add(_map)
 	End Method
+	
+	Method GetMap:FlxTilemap()
+		Return _map
+	End Method
 
 End Class

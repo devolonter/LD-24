@@ -32,7 +32,7 @@ Class PlayState Extends FlxState
 		
 		console = Console(Add(New Console(consoleCamera)))
 		
-		console.Push("Welcome to MICRO EVO!")
+		console.Push("--CONSOLE OUTPUT--")
 		
 		Local layoutCamera:FlxCamera = New FlxCamera(0, 0, FlxG.Width, FlxG.Height)
 		FlxG.AddCamera(layoutCamera)
