@@ -12,6 +12,8 @@ Class Assets
 	
 	Const SPRITE_DISPLAY_CONSOLE:String = "display_console"
 	
+	Const TILESET:String = "tiles"
+	
 	Const BUTTON_CMD:String = "button_cmd"
 	
 	Const BUTTON_RTFM:String = "button_rtfm"

@@ -10,6 +10,8 @@ Import assets
 
 Class Game Extends FlxGame
 
+	Const LEVELS_COUNT:Int = 1
+
 Private
 	Field _inputManager:InputManager
 	
@@ -33,11 +35,17 @@ Public
 		FlxAssetsManager.AddImage(Assets.SPRITE_DISPLAY_MAIN, "images/display/main.png")
 		FlxAssetsManager.AddImage(Assets.SPRITE_DISPLAY_CONSOLE, "images/display/console.png")
 		
+		FlxAssetsManager.AddImage(Assets.TILESET, "images/tileset.png")
+		
 		FlxAssetsManager.AddImage(Assets.BUTTON_CMD, "images/buttons/cmd.png")
 		FlxAssetsManager.AddImage(Assets.BUTTON_RTFM, "images/buttons/rtfm.png")
 		FlxAssetsManager.AddImage(Assets.BUTTON_DISPLAY, "images/buttons/display.png")
 		FlxAssetsManager.AddImage(Assets.BUTTON_RUN, "images/buttons/start.png")
 		FlxAssetsManager.AddImage(Assets.BUTTON_REVERT, "images/buttons/restart.png")
+		
+		For Local i:Int = 1 To LEVELS_COUNT
+			FlxAssetsManager.AddString("level_" + i, "levels/" + i + "/map.csv")
+		Next
 	End Method
 	
 	Method OnUpdate:Int()
