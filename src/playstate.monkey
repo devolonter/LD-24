@@ -14,6 +14,8 @@ Class PlayState Extends FlxState
 	Const FIELD_SIZE:Int = 11
 
 	Field codeEditor:CodeEditor
+	
+	Field console:Console
 
 	Method Create:Void()
 		FlxG.Camera.X = 26
@@ -26,7 +28,9 @@ Class PlayState Extends FlxState
 		Local consoleCamera:FlxCamera = New FlxCamera(454, 111, 171, 260)
 		FlxG.AddCamera(consoleCamera)
 		
-		Add(New Console(consoleCamera))
+		console = Console(Add(New Console(consoleCamera)))
+		
+		console.Push("Welcome to MICRO EVO!")
 		
 		Local layoutCamera:FlxCamera = New FlxCamera(0, 0, FlxG.Width, FlxG.Height)
 		FlxG.AddCamera(layoutCamera)
