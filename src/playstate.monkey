@@ -12,8 +12,6 @@ Class PlayState Extends FlxState
 	Const TILE_SIZE:Int = 36
 	
 	Const FIELD_SIZE:Int = 11
-
-	Field codeEditor:CodeEditor
 	
 	Field console:Console
 

@@ -16,6 +16,7 @@ Private
 	
 	Field _textStack:StringStack
 	
+Public
 	Method New(camera:FlxCamera)
 		Cameras =[camera.ID]
 		width = camera.Width

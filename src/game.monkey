@@ -13,6 +13,7 @@ Class Game Extends FlxGame
 Private
 	Field _inputManager:InputManager
 	
+Public
 	Method New()
 		Super.New(640, 480, GetClass("PlayState"),,, 60, True)
 		_inputManager = InputManager.GetInstance()

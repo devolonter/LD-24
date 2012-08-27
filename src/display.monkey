@@ -3,22 +3,29 @@ Strict
 Import flixel
 
 Import assets
+Import codeeditor
 
 Class Display Extends FlxGroup Implements FlxTweenListener
 
 	Field width:Float
 	
 	Field height:Float
+	
+	Field codeEditor:CodeEditor
 
 Private
 	Field _hertzLine:FlxSprite
 	
+Public
 	Method New(camera:FlxCamera)
 		Cameras =[camera.ID]
 		width = camera.Width
 		height = camera.Height
 		
 		Add(New FlxSprite(0, 0, Assets.SPRITE_DISPLAY_MAIN))
+		
+		codeEditor = New CodeEditor(15, 15, width - 30, height)
+		Add(codeEditor)
 		
 		_hertzLine = New FlxSprite(0, camera.Height)
 		_hertzLine.MakeGraphic(camera.Width, camera.Height * 0.25)
