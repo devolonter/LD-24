@@ -117,7 +117,7 @@ Class RunButton Extends Button
 	End Method
 	
 	Method OnTurnOn:Void()
-		
+		context.Exec()
 	End Method
 	
 	Method OnTurnOff:Void()

@@ -6,6 +6,7 @@ Import assets
 Import codeeditor
 Import levelmap
 Import playstate
+Import modules
 
 Class Display Extends FlxGroup Implements FlxTweenListener
 
@@ -32,6 +33,8 @@ Private
 	
 	Field _camera:FlxCamera
 	
+	Field _currentLevel:Int
+	
 Public
 	Method New(context:PlayState, camera:FlxCamera)
 		Cameras =[camera.ID]
@@ -51,6 +54,10 @@ Public
 		
 		levelMap = New LevelMap()
 		levelMap.visible = False
+		
+		_currentLevel = 3
+		levelMap.LoadLevel(_currentLevel)
+		
 		Add(levelMap)
 		
 		_hertzLine = New FlxSprite(0, camera.Height)
@@ -65,6 +72,35 @@ Public
 		Add(_hertzLine)
 		
 		AddTween(New Alarm(6, Self), True)
+		
+		Local mfModule:MfModule = New MfModule()
+		codeEditor.AddModule(mfModule)
+		levelMap.programStack.AddModule(mfModule)
+		
+		Local mrModule:MrModule = New MrModule()
+		codeEditor.AddModule(mrModule)
+		levelMap.programStack.AddModule(mrModule)
+		
+		Local mlModule:MlModule = New MlModule()
+		codeEditor.AddModule(mlModule)
+		levelMap.programStack.AddModule(mlModule)
+	End Method
+	
+	Method Update:Void()
+		Super.Update()
+		
+		If (levelMap.programStack.IsComplete()) Then
+			If (levelMap.programStack.HasError()) Then
+				
+			Else
+				If (levelMap.IsValid()) Then
+					_currentLevel += 1
+					levelMap.LoadLevel(_currentLevel)
+				End If
+			End If
+		End If
+		
+		
 	End Method
 	
 	Method TurnOn:Void(window:Int)
@@ -103,8 +139,11 @@ Public
 			
 			Case MAP_WINDOW
 				levelMap.visible = False
-				
 		End Select
+	End Method
+	
+	Method Exec:Void()
+		levelMap.programStack.Exec(codeEditor.GetSource())
 	End Method
 	
 	Method OnTweenComplete:Void()

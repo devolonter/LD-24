@@ -11,7 +11,7 @@ Class PlayState Extends FlxState
 
 	Const TILE_SIZE:Int = 36
 	
-	Const FIELD_SIZE:Int = 11
+	Const FIELD_SIZE:Int = 11	
 	
 	Field display:Display
 	

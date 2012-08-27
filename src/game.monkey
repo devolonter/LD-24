@@ -10,7 +10,7 @@ Import assets
 
 Class Game Extends FlxGame
 
-	Const LEVELS_COUNT:Int = 1
+	Const LEVELS_COUNT:Int = 12
 
 Private
 	Field _inputManager:InputManager
@@ -34,6 +34,9 @@ Public
 		FlxAssetsManager.AddImage(Assets.SPRITE_LAYOUT, "images/layout.png")
 		FlxAssetsManager.AddImage(Assets.SPRITE_DISPLAY_MAIN, "images/display/main.png")
 		FlxAssetsManager.AddImage(Assets.SPRITE_DISPLAY_CONSOLE, "images/display/console.png")
+		
+		FlxAssetsManager.AddImage(Assets.SPRITE_PLAYER, "images/player.png")
+		FlxAssetsManager.AddImage(Assets.SPRITE_CHIP, "images/chip.png")
 		
 		FlxAssetsManager.AddImage(Assets.TILESET, "images/tileset.png")
 		

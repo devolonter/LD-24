@@ -11,6 +11,8 @@ Class Console Extends FlxGroup
 	
 Private
 	Const _MAX_MESSAGES_COUNT:Int = 11
+	
+	Global _Console:Console
 
 	Field _text:FlxText
 	
@@ -18,6 +20,10 @@ Private
 	
 Public
 	Method New(camera:FlxCamera)
+		If (_Console <> Null) Then
+			Error "Console must be singleton"
+		End If
+	
 		Cameras =[camera.ID]
 		width = camera.Width
 		height = camera.Height
@@ -30,6 +36,8 @@ Public
 		Add(_text)
 		
 		_textStack = New StringStack()
+		
+		_Console = Self
 	End Method
 	
 	Method Push:Void(message:String)
@@ -41,5 +49,9 @@ Public
 		
 		_text.Text = _textStack.Join("~n")
 	End Method
+	
+	Function GetInstance:Console()
+		Return _Console
+	End Function
 	
 End Class

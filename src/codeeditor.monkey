@@ -6,6 +6,7 @@ Import flixel
 Import assets
 Import inputmanager
 Import caret
+Import modules
 
 Class CodeEditor Extends FlxGroup
 
@@ -21,6 +22,8 @@ Private
 	Const _LINE_HEIGHT:Int = 25
 	
 	Const _MEMORY_LIMIT:Int = 15
+	
+	Field _availableCommands:StringSet
 	
 	Field _cmd:FlxText[_MEMORY_LIMIT]
 	
@@ -41,12 +44,6 @@ Public
 		Self.width = width
 		Self.height = height
 		
-		#Rem
-		Local title:FlxText = New FlxText(x + 10, y + 10, width - 20, "MICRO EVO IDE V24 LD:")
-		title.SetFormat(Assets.FONT_PROFONT, 18)
-		Add(title)
-		#End
-		
 		For Local i:Int = 0 Until _MEMORY_LIMIT
 			_cmd[i] = New FlxText(x, y + i * _LINE_HEIGHT, width, "")
 			_cmd[i].SetFormat(Assets.FONT_PROFONT, 18)
@@ -61,16 +58,35 @@ Public
 		
 		_caret = New Caret(x, y, _charWidth, _charHeight)
 		Add(_caret)
+		
+		_availableCommands = New StringSet()
+		
+		For Local i:Int = 0 To 9
+			_availableCommands.Insert(i)
+		Next
 	End Method
 	
 	Method Update:Void()
 		Super.Update()
+		If ( Not visible) Return
 		
 		If (_inputManager.GetChar() > 32) Then
-			_cmd[_mark].Text += String.FromChar(_inputManager.GetChar()).ToUpper()
+			If (_mark = _MEMORY_LIMIT) Return
+		
+			Local chr:String = String.FromChar(_inputManager.GetChar()).ToUpper()
+		
+			If ( Not _availableCommands.Contains(chr)) Return
+		
+			_cmd[_mark].Text += chr
 			
 			If (_cmd[_mark].Text.Length() = 3) Then
-				_mark = Min(_MEMORY_LIMIT - 1, _mark + 1)
+				_mark = _mark + 1
+				
+				If (_mark = _MEMORY_LIMIT) Then
+					_caret.visible = False
+					Return
+				End if
+				
 				_caret.x = x
 				_caret.y = y + _mark * _LINE_HEIGHT
 			Else
@@ -79,6 +95,13 @@ Public
 			
 		Else
 			If (_inputManager.GetChar() = CHAR_BACKSPACE) Then
+				If (_mark = _MEMORY_LIMIT) Then
+					_caret.visible = True
+					_caret.x += _charWidth
+					_mark -= 1
+					Return
+				End if
+			
 				If (_cmd[_mark].Text.Length() = 0) Then
 					_mark = Max(0, _mark - 1)
 					_caret.x = (_cmd[_mark].Text.Length() +2) * _charWidth
@@ -93,11 +116,17 @@ Public
 		End If
 	End Method
 	
+	Method AddModule:Void(robotModule:RobotModule)
+		For Local chr:Int = EachIn robotModule.name
+			_availableCommands.Insert(String.FromChar(chr))
+		Next
+	End Method
+	
 	Method GetSource:String()
 		Local source:StringStack = New StringStack()
 	
 		For Local i:Int = 0 Until _MEMORY_LIMIT
-			source.Push(_cmd[i].Text)
+			If(_cmd[i].Text.Length() > 0) source.Push(_cmd[i].Text)
 		Next
 		
 		Return source.Join(";")
