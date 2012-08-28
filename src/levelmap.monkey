@@ -152,7 +152,7 @@ Public
 				object2.Kill()
 				_context.help.OpenNextModule()
 			Case _BUTTON_ID
-				FlxSprite(object2).Frame = 1
+				_laserDisabled = True
 		End Select
 	
 	
@@ -197,7 +197,7 @@ Public
 	End Method
 	
 	Method Update:Void()
-		_button.Frame = 0
+		_laserDisabled = False
 		FlxG.Collide(_box, map)
 		
 		If (_box.alive) Then
@@ -213,20 +213,22 @@ Public
 
 		FlxG.Collide(player, map)
 		FlxG.Overlap(player, _chip, Self)
+		
 		If (_hasLaser) Then
 			FlxG.Overlap(player, _button, Self)
 			FlxG.Overlap(_box, _button, Self)
-		End If
-		
-		If (_button.Frame = 1 And Not _laserDisabled) Then
-			DisableLaser()
-		ElseIf(_button.Frame = 0 And Not)
+			
+			If (_button.Frame = 0 And _laserDisabled) Then
+				_button.Frame = 1
+				DisableLaser()
+			ElseIf(_button.Frame = 1 And Not _laserDisabled) Then
+				_button.Frame = 0
+				EnableLaser()
+			End If
 		End If
 	End Method
 	
 	Method DisableLaser:Void()
-		If (_laserDisabled) Return
-	
 		Local tiles:Stack<Int>
 	
 		For Local i:Int = 18 To 23
@@ -246,23 +248,24 @@ Public
 					Case 23
 						map.SetTileByIndex(tiles.Get(0), 15)
 						
-					Case 19, 22
+					Case 19
 						For Local t:Int = EachIn tiles
-							map.SetTileByIndex(t, 0)
+							map.SetTileByIndex(t, 40)
+						Next
+						
+					Case 22
+						For Local t:Int = EachIn tiles
+							map.SetTileByIndex(t, 41)
 						Next
 				End Select
 			End If
 		Next
-		
-		_laserDisabled = True
 	End Method
 	
 	Method EnableLaser:Void()
-		If ( Not _laserDisabled) Return
-	
 		Local tiles:Stack<Int>
 	
-		For Local i:Int = 18 To 23
+		For Local i:Int = 14 To 17
 			tiles = map.GetTileInstances(i)
 			
 			If (tiles) Then
@@ -278,16 +281,28 @@ Public
 						
 					Case 15
 						map.SetTileByIndex(tiles.Get(0), 23)
-						
-					Case 19, 22
-						For Local t:Int = EachIn tiles
-							map.SetTileByIndex(t, 0)
-						Next
+
 				End Select
 			End If
 		Next
 		
-		_laserDisabled = False
+		For Local i:Int = 40 To 41
+			tiles = map.GetTileInstances(i)
+			
+			If (tiles) Then
+				Select i						
+					Case 40
+						For Local t:Int = EachIn tiles
+							map.SetTileByIndex(t, 19)
+						Next
+						
+					Case 41
+						For Local t:Int = EachIn tiles
+							map.SetTileByIndex(t, 22)
+						Next
+				End Select
+			End If	
+		Next
 	End Method
 
 End Class

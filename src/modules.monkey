@@ -174,7 +174,6 @@ Public
 			Case 90, -270
 				LinearMotion(_tween).SetMotionSpeed(b.x, b.y, b.x + PlayState.TILE_SIZE * value,
 					b.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
-					
 			Case 180, -180
 				LinearMotion(_tween).SetMotionSpeed(b.x, b.y, b.x,
 					b.y +PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
