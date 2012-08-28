@@ -62,7 +62,7 @@ Public
 		levelMap = New LevelMap(Self)
 		levelMap.visible = False
 		
-		_currentLevel = 6
+		_currentLevel = 7
 		levelMap.LoadLevel(_currentLevel)
 		
 		Add(levelMap)

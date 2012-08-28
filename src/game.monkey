@@ -40,6 +40,7 @@ Public
 		FlxAssetsManager.AddImage(Assets.SPRITE_PLAYER, "images/player.png")
 		FlxAssetsManager.AddImage(Assets.SPRITE_CHIP, "images/chip.png")
 		FlxAssetsManager.AddImage(Assets.SPRITE_BOX, "images/box.png")
+		FlxAssetsManager.AddImage(Assets.SPRITE_BUTTON, "images/push_b.png")
 		
 		FlxAssetsManager.AddImage(Assets.TILESET, "images/tileset.png")
 		

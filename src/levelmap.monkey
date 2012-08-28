@@ -18,11 +18,21 @@ Class LevelMap Extends FlxGroup Implements FlxTileHitListener, FlxOverlapNotifyL
 	Field map:FlxTilemap
 	
 Private
+	Const _CHIP_ID:Int = 1
+	
+	Const _BUTTON_ID:Int = 2
+
 	Field _chip:FlxSprite
+	
+	Field _button:FlxSprite
 	
 	Field _box:Box
 	
 	Field _context:Display
+	
+	Field _hasLaser:Bool
+	
+	Field _laserDisabled:Bool
 
 Public
 	Method New(context:Display)
@@ -32,22 +42,33 @@ Public
 		programStack = New ProgramStack(player)
 		
 		_chip = New FlxSprite(0, 0, Assets.SPRITE_CHIP)
-		_chip.Kill()
+		_chip.ID = _CHIP_ID
+		
+		_button = New FlxSprite()
+		_button.LoadGraphic(Assets.SPRITE_BUTTON, True,, PlayState.TILE_SIZE, PlayState.TILE_SIZE)
+		_button.ID = _BUTTON_ID
 		
 		_box = New Box(0, 0, Assets.SPRITE_BOX)
 		_box.tween.complete = programStack
-		_box.Kill()
 			
 		map = New FlxTilemap()
 		
 		Add(map)
-		Add(player)
 		Add(programStack)
 		Add(_chip)
 		Add(_box)
+		Add(_button)
+		Add(player)
 	End Method
 	
 	Method LoadLevel:Void(level:Int)
+		_hasLaser = False
+		_laserDisabled = False
+		
+		_chip.Kill()
+		_box.Kill()
+		_button.Kill()
+		
 		map.LoadMap(FlxAssetsManager.GetString("level_" + level), Assets.TILESET, PlayState.TILE_SIZE, PlayState.TILE_SIZE,, 0, 0, 3)
 		
 		Local tiles:Stack<Int>
@@ -94,8 +115,22 @@ Public
 			End If
 		Next
 		
+		tiles = map.GetTileInstances(18)
+		_hasLaser = (tiles <> Null)
+		
+		If (_hasLaser) Then
+			tiles = map.GetTileInstances(8)
+			tilesCoord = map.GetTileCoords(8, False)
+			
+			If (tiles) Then
+				_button.Reset(tilesCoord.Get(0).x, tilesCoord.Get(0).y)
+				map.SetTileByIndex(tiles.Get(0), 0)
+			End If
+		End If
+		
 		map.SetTileProperties(24, FlxObject.ANY, Self,, 16)
 		map.SetTileProperties(11, FlxObject.NONE)
+		map.SetTileProperties(14, FlxObject.NONE,,, 4)
 	End Method
 	
 	Method IsValid:Bool()
@@ -104,7 +139,7 @@ Public
 	End Method
 	
 	Method OnTileHit:Void(tile:FlxTile, object:FlxObject)
-		If (tile.index >= 23) Then
+		If (tile.index > 23 And tile.index < 40) Then
 			_box.allowCollisions = FlxObject.NONE
 			_box.hole.x = tile.x
 			_box.hole.y = tile.y
@@ -112,8 +147,15 @@ Public
 	End Method
 	
 	Method OnOverlapNotify:Void(object1:FlxObject, object2:FlxObject)
-		object2.Kill()
-		_context.help.OpenNextModule()
+		Select object2.ID
+			Case _CHIP_ID
+				object2.Kill()
+				_context.help.OpenNextModule()
+			Case _BUTTON_ID
+				FlxSprite(object2).Frame = 1
+		End Select
+	
+	
 	End Method
 	
 	Method GetBox:Box()
@@ -151,12 +193,11 @@ Public
 			Return _box
 		Else
 			Return Null
-		End If
-		
-		
+		End If		
 	End Method
 	
 	Method Update:Void()
+		_button.Frame = 0
 		FlxG.Collide(_box, map)
 		
 		If (_box.alive) Then
@@ -172,6 +213,81 @@ Public
 
 		FlxG.Collide(player, map)
 		FlxG.Overlap(player, _chip, Self)
+		If (_hasLaser) Then
+			FlxG.Overlap(player, _button, Self)
+			FlxG.Overlap(_box, _button, Self)
+		End If
+		
+		If (_button.Frame = 1 And Not _laserDisabled) Then
+			DisableLaser()
+		ElseIf(_button.Frame = 0 And Not)
+		End If
+	End Method
+	
+	Method DisableLaser:Void()
+		If (_laserDisabled) Return
+	
+		Local tiles:Stack<Int>
+	
+		For Local i:Int = 18 To 23
+			tiles = map.GetTileInstances(i)
+			
+			If (tiles) Then
+				Select i
+					Case 18
+						map.SetTileByIndex(tiles.Get(0), 16)
+						
+					Case 20
+						map.SetTileByIndex(tiles.Get(0), 17)
+						
+					Case 21
+						map.SetTileByIndex(tiles.Get(0), 14)
+						
+					Case 23
+						map.SetTileByIndex(tiles.Get(0), 15)
+						
+					Case 19, 22
+						For Local t:Int = EachIn tiles
+							map.SetTileByIndex(t, 0)
+						Next
+				End Select
+			End If
+		Next
+		
+		_laserDisabled = True
+	End Method
+	
+	Method EnableLaser:Void()
+		If ( Not _laserDisabled) Return
+	
+		Local tiles:Stack<Int>
+	
+		For Local i:Int = 18 To 23
+			tiles = map.GetTileInstances(i)
+			
+			If (tiles) Then
+				Select i
+					Case 16
+						map.SetTileByIndex(tiles.Get(0), 18)
+						
+					Case 17
+						map.SetTileByIndex(tiles.Get(0), 20)
+						
+					Case 14
+						map.SetTileByIndex(tiles.Get(0), 21)
+						
+					Case 15
+						map.SetTileByIndex(tiles.Get(0), 23)
+						
+					Case 19, 22
+						For Local t:Int = EachIn tiles
+							map.SetTileByIndex(t, 0)
+						Next
+				End Select
+			End If
+		Next
+		
+		_laserDisabled = False
 	End Method
 
 End Class
