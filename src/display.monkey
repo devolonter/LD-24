@@ -62,7 +62,7 @@ Public
 		levelMap = New LevelMap(Self)
 		levelMap.visible = False
 		
-		_currentLevel = 8
+		_currentLevel = 12
 		levelMap.LoadLevel(_currentLevel)
 		
 		Add(levelMap)
@@ -99,6 +99,10 @@ Public
 		Local plModule:PlModule = New PlModule()
 		codeEditor.AddModule(plModule)
 		levelMap.programStack.AddModule(plModule)
+		
+		Local rtModule:RtModule = New RtModule()
+		codeEditor.AddModule(rtModule)
+		levelMap.programStack.AddModule(rtModule)
 	End Method
 	
 	Method Update:Void()

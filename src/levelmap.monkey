@@ -28,7 +28,7 @@ Private
 	
 	Field _button:FlxSprite
 	
-	Field _box:Box
+	Field _boxes:FlxGroup
 	
 	Field _context:Display
 	
@@ -50,15 +50,14 @@ Public
 		_button.LoadGraphic(Assets.SPRITE_BUTTON, True,, PlayState.TILE_SIZE, PlayState.TILE_SIZE)
 		_button.ID = _BUTTON_ID
 		
-		_box = New Box(0, 0, Assets.SPRITE_BOX)
-		_box.tween.complete = programStack
+		_boxes = New FlxGroup()
 			
 		map = New FlxTilemap()
 		
 		Add(map)
 		Add(programStack)
 		Add(_button)
-		Add(_box)
+		Add(_boxes)
 		Add(_chip)
 		Add(player)
 	End Method
@@ -68,8 +67,8 @@ Public
 		_laserDisabled = False
 		
 		_chip.Kill()
-		_box.Kill()
 		_button.Kill()
+		_boxes.Kill()
 		
 		map.LoadMap(FlxAssetsManager.GetString("level_" + level), Assets.TILESET, PlayState.TILE_SIZE, PlayState.TILE_SIZE,, 0, 0, 3)
 		
@@ -120,6 +119,11 @@ Public
 		tiles = map.GetTileInstances(18)
 		_hasLaser = (tiles <> Null)
 		
+		If ( Not _hasLaser) Then
+			tiles = map.GetTileInstances(21)
+			_hasLaser = (tiles <> Null)
+		End If
+		
 		If (_hasLaser) Then
 			tiles = map.GetTileInstances(8)
 			tilesCoord = map.GetTileCoords(8, False)
@@ -128,6 +132,26 @@ Public
 				_button.Reset(tilesCoord.Get(0).x, tilesCoord.Get(0).y)
 				map.SetTileByIndex(tiles.Get(0), 0)
 			End If
+		End If
+		
+		tiles = map.GetTileInstances(10)
+		tilesCoord = map.GetTileCoords(10, False)
+		
+		If (tiles) Then
+			_boxes.Revive()		
+			Local box:Box
+			
+			Local offset:Int = 0
+			For Local i:Int = EachIn tiles
+				map.SetTileByIndex(i, 0)
+				box = Box(_boxes.Recycle(ClassInfo(Box.ClassObject)))
+				box.LoadGraphic(Assets.SPRITE_BOX)
+				box.ID = _BOX_ID
+				box.active = False
+				box.Reset(tilesCoord.Get(offset).x, tilesCoord.Get(offset).y)
+				
+				offset += 1
+			Next
 		End If
 		
 		map.SetTileProperties(24, FlxObject.ANY, Self,, 16)
@@ -141,13 +165,13 @@ Public
 	End Method
 	
 	Method OnTileHit:Void(tile:FlxTile, object:FlxObject)
-		If (tile.index > 23 And tile.index < 40) Then
-			_box.allowCollisions = FlxObject.NONE
-			_box.hole.x = tile.x
-			_box.hole.y = tile.y
+		If (object.ID = _BOX_ID) Then
+			If (tile.index > 23 And tile.index < 40) Then
+				object.allowCollisions = FlxObject.NONE
+				Box(object).hole.x = tile.x
+				Box(object).hole.y = tile.y
+			End If
 		End If
-		
-		
 	End Method
 	
 	Method OnOverlapNotify:Void(object1:FlxObject, object2:FlxObject)
@@ -180,38 +204,41 @@ Public
 				x = player.x
 				y = player.y + player.height
 			
-				index = map.GetTile(player.x / PlayState.TILE_SIZE, (player.y + player.height) / PlayState.TILE_SIZE)
-			
 			Case 270, -90
 				x = player.x - player.width
 				y = player.y
 		End Select
-	
-		index = map.GetTile(x / PlayState.TILE_SIZE, y / PlayState.TILE_SIZE)
-	
-		If (index = 10) Then
-			_box.Reset(x, y)
-			_box.Revive()
-			map.SetTile(x / PlayState.TILE_SIZE, y / PlayState.TILE_SIZE, 0)
+		
+		Local box:Box
+		Local p:FlxPoint = New FlxPoint(x + PlayState.TILE_SIZE * 0.5, y + PlayState.TILE_SIZE * 0.5)
+		
+		For Local b:FlxBasic = EachIn _boxes
+			box = Box(b)
 			
-			Return _box
-		Else
-			Return Null
-		End If		
+			If (box.OverlapsPoint(p)) Exit
+			box = Null
+		Next
+		
+		Return box		
 	End Method
 	
 	Method Update:Void()
 		_laserDisabled = False
-		FlxG.Collide(_box, map)
+		FlxG.Collide(_boxes, map)
 		
-		If (_box.alive) Then
-			If (Abs(_box.x - _box.hole.x) <= Abs(_box.x - _box.last.x) And Abs(_box.y - _box.hole.y) <= Abs(_box.y - _box.last.y)) Then
-				map.SetTile(_box.hole.x / PlayState.TILE_SIZE, _box.hole.y / PlayState.TILE_SIZE, 11)
-				_box.tween.Finish()
-				_box.allowCollisions = FlxObject.ANY
-				_box.Kill()
+		For Local b:FlxBasic = EachIn _boxes
+			If (b.active) Then
+				Local box:Box = Box(b)
+				
+				If (box.hole.x > 0) Then
+					If (Abs(box.x - box.hole.x) <= Abs(box.x - box.last.x) And Abs(box.y - box.hole.y) <= Abs(box.y - box.last.y)) Then
+						map.SetTile(box.hole.x / PlayState.TILE_SIZE, box.hole.y / PlayState.TILE_SIZE, 11)
+						box.tween.Finish()
+						box.Kill()
+					End If
+				End If
 			End If
-		End If
+		Next
 	
 		Super.Update()
 
@@ -220,7 +247,7 @@ Public
 		
 		If (_hasLaser) Then
 			FlxG.Overlap(player, _button, Self)
-			FlxG.Overlap(_box, _button, Self)
+			FlxG.Overlap(_boxes, _button, Self)
 			
 			If (_button.Frame = 0 And _laserDisabled) Then
 				_button.Frame = 1

@@ -100,7 +100,7 @@ Private
 	
 	Method OnTweenComplete:Void()
 		Local p:Player = _programStack.Context
-		If (p.angle = 360) p.angle = 0
+		p.angle Mod = 360
 		
 		mfModule.Exec(value)
 	End Method
@@ -140,14 +140,17 @@ Private
 	
 	Method OnTweenComplete:Void()
 		Local p:Player = _programStack.Context
-		If (p.angle = -360) p.angle = 0
+		p.angle Mod = 360
 	
 		mfModule.Exec(value)
 	End Method
 
 End Class
 
-Class PsModule Extends RobotModule
+Class PsModule Extends RobotModule Implements FlxTweenListener
+
+Private
+	Field _box:Box
 
 Public
 	Method New()
@@ -159,38 +162,47 @@ Public
 	
 		Local p:Player = _programStack.Context
 		Local l:LevelMap = p.Context
-		Local b:Box
 		
-		b = l.GetBox()
-		If (b = Null) Return False
+		_box = l.GetBox()
+		If (_box = Null) Return False
 		
-		_tween = b.tween
+		_tween = _box.tween
 
 		Select p.angle
 			Case 0
-				b.tween.SetMotionSpeed(b.x, b.y, b.x,
-					b.y -PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
+				_box.tween.SetMotionSpeed(_box.x, _box.y, _box.x,
+					_box.y -PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 
 			Case 90, -270
-				b.tween.SetMotionSpeed(b.x, b.y, b.x + PlayState.TILE_SIZE * value,
-					b.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
+				_box.tween.SetMotionSpeed(_box.x, _box.y, _box.x + PlayState.TILE_SIZE * value,
+					_box.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 			Case 180, -180
-				b.tween.SetMotionSpeed(b.x, b.y, b.x,
-					b.y +PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
+				_box.tween.SetMotionSpeed(_box.x, _box.y, _box.x,
+					_box.y +PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 			
 			Case 270, -90
-				b.tween.SetMotionSpeed(b.x, b.y, b.x - PlayState.TILE_SIZE * value,
-					b.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
+				_box.tween.SetMotionSpeed(_box.x, _box.y, _box.x - PlayState.TILE_SIZE * value,
+					_box.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 				
 		End Select
 
+		_box.active = True
+		_tween.complete = Self
 		_tween.Start()
 		Return True
 	End Method
 	
+	Method OnTweenComplete:Void()
+		_box.active = False
+		_programStack.OnTweenComplete()
+	End Method
+	
 End Class
 
-Class PlModule Extends RobotModule
+Class PlModule Extends RobotModule Implements FlxTweenListener
+
+Private
+	Field _box:Box
 
 Public
 	Method New()
@@ -210,45 +222,83 @@ Public
 	
 		Local p:Player = _programStack.Context
 		Local l:LevelMap = p.Context
-		Local b:Box
 		
-		b = l.GetBox()
-		If (b = Null) Return False
+		_box = l.GetBox()
+		If (_box = Null) Return False
 
 		Select p.angle
 			Case 0
-				b.tween.SetMotionSpeed(b.x, b.y, b.x,
-					b.y +PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
+				_box.tween.SetMotionSpeed(_box.x, _box.y, _box.x,
+					_box.y +PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 					
 				LinearMotion(_tween).SetMotionSpeed(p.x, p.y, p.x,
 					p.y +PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 
 			Case 90, -270
-				b.tween.SetMotionSpeed(b.x, b.y, b.x - PlayState.TILE_SIZE * value,
-					b.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
+				_box.tween.SetMotionSpeed(_box.x, _box.y, _box.x - PlayState.TILE_SIZE * value,
+					_box.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 					
 				LinearMotion(_tween).SetMotionSpeed(p.x, p.y, p.x - PlayState.TILE_SIZE * value,
 					p.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 					
 			Case 180, -180
-				b.tween.SetMotionSpeed(b.x, b.y, b.x,
-					b.y -PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
+				_box.tween.SetMotionSpeed(_box.x, _box.y, _box.x,
+					_box.y -PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 					
 				LinearMotion(_tween).SetMotionSpeed(p.x, p.y, p.x,
 					p.y -PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 			
 			Case 270, -90
-				b.tween.SetMotionSpeed(b.x, b.y, b.x + PlayState.TILE_SIZE * value,
-					b.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
+				_box.tween.SetMotionSpeed(_box.x, _box.y, _box.x + PlayState.TILE_SIZE * value,
+					_box.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 					
 				LinearMotion(_tween).SetMotionSpeed(p.x, p.y, p.x + PlayState.TILE_SIZE * value,
 					p.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 				
 		End Select
-
-		b.tween.Start()
+		
+		_box.active = True
+		_box.tween.complete = Self
+		
+		_box.tween.Start()
 		_tween.Start()
 		Return True
 	End Method
 	
+	Method OnTweenComplete:Void()
+		_box.active = False
+		_programStack.OnTweenComplete()
+	End Method
+	
+End Class
+
+Class RtModule Extends RobotModule Implements FlxTweenListener
+
+	Method New()
+		name = "RT"
+	End Method
+	
+	Method SetContext:Void(stack:ProgramStack)
+		Super.SetContext(stack)
+		
+		_tween = New VarTween(Self)
+		_programStack.AddTween(_tween)
+	End Method
+	
+	Method Exec:Bool(value:Int)
+		If ( Not _programStack.Context) Return False
+		Local p:Player = _programStack.Context
+		
+		VarTween(_tween).Tween(p, "angle", p.angle + 90 * value, 0.5 * value, Ease.SineInOut)
+		
+		Return True
+	End Method
+	
+	Method OnTweenComplete:Void()
+		Local p:Player = _programStack.Context
+		p.angle Mod = 360
+
+		_programStack.OnTweenComplete()
+	End Method
+
 End Class
