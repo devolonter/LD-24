@@ -168,22 +168,85 @@ Public
 
 		Select p.angle
 			Case 0
-				LinearMotion(_tween).SetMotionSpeed(b.x, b.y, b.x,
+				b.tween.SetMotionSpeed(b.x, b.y, b.x,
 					b.y -PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 
 			Case 90, -270
-				LinearMotion(_tween).SetMotionSpeed(b.x, b.y, b.x + PlayState.TILE_SIZE * value,
+				b.tween.SetMotionSpeed(b.x, b.y, b.x + PlayState.TILE_SIZE * value,
 					b.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 			Case 180, -180
-				LinearMotion(_tween).SetMotionSpeed(b.x, b.y, b.x,
+				b.tween.SetMotionSpeed(b.x, b.y, b.x,
 					b.y +PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 			
 			Case 270, -90
-				LinearMotion(_tween).SetMotionSpeed(b.x, b.y, b.x - PlayState.TILE_SIZE * value,
+				b.tween.SetMotionSpeed(b.x, b.y, b.x - PlayState.TILE_SIZE * value,
 					b.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 				
 		End Select
 
+		_tween.Start()
+		Return True
+	End Method
+	
+End Class
+
+Class PlModule Extends RobotModule
+
+Public
+	Method New()
+		name = "PL"
+	End Method
+	
+	Method SetContext:Void(stack:ProgramStack)
+		Super.SetContext(stack)
+		_tween = New LinearMotion()
+		LinearMotion(_tween).SetObject(_programStack.Context)
+		_programStack.AddTween(_tween)
+		_programStack.Context.immovable = False
+	End Method
+	
+	Method Exec:Bool(value:Int)
+		If ( Not _programStack.Context) Return False
+	
+		Local p:Player = _programStack.Context
+		Local l:LevelMap = p.Context
+		Local b:Box
+		
+		b = l.GetBox()
+		If (b = Null) Return False
+
+		Select p.angle
+			Case 0
+				b.tween.SetMotionSpeed(b.x, b.y, b.x,
+					b.y +PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
+					
+				LinearMotion(_tween).SetMotionSpeed(p.x, p.y, p.x,
+					p.y +PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
+
+			Case 90, -270
+				b.tween.SetMotionSpeed(b.x, b.y, b.x - PlayState.TILE_SIZE * value,
+					b.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
+					
+				LinearMotion(_tween).SetMotionSpeed(p.x, p.y, p.x - PlayState.TILE_SIZE * value,
+					p.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
+					
+			Case 180, -180
+				b.tween.SetMotionSpeed(b.x, b.y, b.x,
+					b.y -PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
+					
+				LinearMotion(_tween).SetMotionSpeed(p.x, p.y, p.x,
+					p.y -PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
+			
+			Case 270, -90
+				b.tween.SetMotionSpeed(b.x, b.y, b.x + PlayState.TILE_SIZE * value,
+					b.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
+					
+				LinearMotion(_tween).SetMotionSpeed(p.x, p.y, p.x + PlayState.TILE_SIZE * value,
+					p.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
+				
+		End Select
+
+		b.tween.Start()
 		_tween.Start()
 		Return True
 	End Method

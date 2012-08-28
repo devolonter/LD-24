@@ -21,6 +21,8 @@ Private
 	Const _CHIP_ID:Int = 1
 	
 	Const _BUTTON_ID:Int = 2
+	
+	Const _BOX_ID:Int = 3
 
 	Field _chip:FlxSprite
 	
@@ -55,9 +57,9 @@ Public
 		
 		Add(map)
 		Add(programStack)
-		Add(_chip)
-		Add(_box)
 		Add(_button)
+		Add(_box)
+		Add(_chip)
 		Add(player)
 	End Method
 	
@@ -144,6 +146,8 @@ Public
 			_box.hole.x = tile.x
 			_box.hole.y = tile.y
 		End If
+		
+		
 	End Method
 	
 	Method OnOverlapNotify:Void(object1:FlxObject, object2:FlxObject)
