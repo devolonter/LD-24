@@ -11,6 +11,8 @@ Import assets
 Class Game Extends FlxGame
 
 	Const LEVELS_COUNT:Int = 12
+	
+	Const CHIPS_COUNT:Int = 6
 
 Private
 	Field _inputManager:InputManager
@@ -37,6 +39,7 @@ Public
 		
 		FlxAssetsManager.AddImage(Assets.SPRITE_PLAYER, "images/player.png")
 		FlxAssetsManager.AddImage(Assets.SPRITE_CHIP, "images/chip.png")
+		FlxAssetsManager.AddImage(Assets.SPRITE_BOX, "images/box.png")
 		
 		FlxAssetsManager.AddImage(Assets.TILESET, "images/tileset.png")
 		
@@ -48,6 +51,10 @@ Public
 		
 		For Local i:Int = 1 To LEVELS_COUNT
 			FlxAssetsManager.AddString("level_" + i, "levels/" + i + "/map.csv")
+		Next
+		
+		For Local i:Int = 1 To CHIPS_COUNT
+			FlxAssetsManager.AddImage("help_" + i, "images/instructions/" + i + ".png")
 		Next
 	End Method
 	

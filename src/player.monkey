@@ -9,19 +9,19 @@ Import assets
 Class Player Extends FlxSprite
 
 Private
-	Field _context:FlxTilemap
+	Field _context:LevelMap
 	
 Public
-	Method New(x:Float, y:Float, context:FlxTilemap)
+	Method New(x:Float, y:Float, context:LevelMap)
 		_context = context
 		LoadGraphic(Assets.SPRITE_PLAYER,,, PlayState.TILE_SIZE, PlayState.TILE_SIZE)
 	End Method
 	
-	Method Context:Void(context:FlxTilemap) Property
+	Method Context:Void(context:LevelMap) Property
 		_context = context
 	End Method
 	
-	Method Context:FlxTilemap() Property
+	Method Context:LevelMap() Property
 		Return _context
 	End Method
 

@@ -7,6 +7,7 @@ Import codeeditor
 Import levelmap
 Import playstate
 Import modules
+Import help
 
 Class Display Extends FlxGroup Implements FlxTweenListener
 
@@ -23,6 +24,8 @@ Class Display Extends FlxGroup Implements FlxTweenListener
 	Field codeEditor:CodeEditor
 	
 	Field levelMap:LevelMap
+	
+	Field help:Help
 	
 	Field context:PlayState
 
@@ -52,10 +55,14 @@ Public
 		codeEditor.visible = False
 		Add(codeEditor)
 		
-		levelMap = New LevelMap()
+		help = New Help(30, 15)
+		help.visible = False
+		Add(help)
+		
+		levelMap = New LevelMap(Self)
 		levelMap.visible = False
 		
-		_currentLevel = 3
+		_currentLevel = 6
 		levelMap.LoadLevel(_currentLevel)
 		
 		Add(levelMap)
@@ -84,6 +91,10 @@ Public
 		Local mlModule:MlModule = New MlModule()
 		codeEditor.AddModule(mlModule)
 		levelMap.programStack.AddModule(mlModule)
+		
+		Local psModule:PsModule = New PsModule()
+		codeEditor.AddModule(psModule)
+		levelMap.programStack.AddModule(psModule)
 	End Method
 	
 	Method Update:Void()
@@ -98,9 +109,7 @@ Public
 					levelMap.LoadLevel(_currentLevel)
 				End If
 			End If
-		End If
-		
-		
+		End If		
 	End Method
 	
 	Method TurnOn:Void(window:Int)
@@ -115,6 +124,7 @@ Public
 			
 			Case HELP_WINDOW
 				_background.visible = True
+				help.visible = True
 				
 				If (context.layout.runButton.On) Then
 					context.layout.runButton.Checked = False
@@ -136,6 +146,7 @@ Public
 			
 			Case HELP_WINDOW
 				_background.visible = False
+				help.visible = False
 			
 			Case MAP_WINDOW
 				levelMap.visible = False

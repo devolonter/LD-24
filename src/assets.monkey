@@ -16,6 +16,8 @@ Class Assets
 	
 	Const SPRITE_CHIP:String = "chip"
 	
+	Const SPRITE_BOX:String = "box"
+	
 	Const TILESET:String = "tiles"
 	
 	Const BUTTON_CMD:String = "button_cmd"
