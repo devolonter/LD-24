@@ -35,6 +35,8 @@ Private
 	Field _hasLaser:Bool
 	
 	Field _laserDisabled:Bool
+	
+	Field _info:String[]
 
 Public
 	Method New(context:Display)
@@ -157,6 +159,8 @@ Public
 		map.SetTileProperties(24, FlxObject.ANY, Self,, 16)
 		map.SetTileProperties(11, FlxObject.NONE)
 		map.SetTileProperties(14, FlxObject.NONE,,, 4)
+		
+		_info = FlxAssetsManager.GetString("console_" + level).Split("~n")
 	End Method
 	
 	Method IsValid:Bool()
@@ -182,8 +186,6 @@ Public
 			Case _BUTTON_ID
 				_laserDisabled = True
 		End Select
-	
-	
 	End Method
 	
 	Method GetBox:Box()
@@ -333,6 +335,15 @@ Public
 						Next
 				End Select
 			End If	
+		Next
+	End Method
+	
+	Method PutInfo:Void()
+		Local c:Console = Console.GetInstance()
+		c.Empty()
+		
+		For Local s:String = EachIn _info
+			c.Push(s)
 		Next
 	End Method
 

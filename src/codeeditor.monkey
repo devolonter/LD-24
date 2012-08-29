@@ -7,6 +7,7 @@ Import assets
 Import inputmanager
 Import caret
 Import modules
+Import levelmap
 
 Class CodeEditor Extends FlxGroup
 
@@ -23,6 +24,8 @@ Private
 	
 	Const _MEMORY_LIMIT:Int = 15
 	
+	Field _availableChars:StringSet
+	
 	Field _availableCommands:StringSet
 	
 	Field _cmd:FlxText[_MEMORY_LIMIT]
@@ -36,6 +39,10 @@ Private
 	Field _charHeight:Int
 
 	Field _inputManager:InputManager
+	
+	Field _console:Console
+	
+	Field _memoryLimit:Int
 	
 Public	
 	Method New(x:Float, y:Float, width:Float, height:Float)
@@ -60,29 +67,60 @@ Public
 		Add(_caret)
 		
 		_availableCommands = New StringSet()
+		_availableChars = New StringSet()
 		
-		For Local i:Int = 0 To 9
-			_availableCommands.Insert(i)
+		For Local i:Int = 1 To 9
+			_availableChars.Insert(i)
 		Next
+		
+		_memoryLimit = _MEMORY_LIMIT
 	End Method
 	
 	Method Update:Void()
 		Super.Update()
+				
 		If ( Not visible) Return
+		If (_console = Null) _console = Console.GetInstance()
 		
 		If (_inputManager.GetChar() > 32) Then
-			If (_mark = _MEMORY_LIMIT) Return
+			If (_mark = _memoryLimit) Then
+				_console.Push("Memory limit")
+				Return
+			End If
 		
 			Local chr:String = String.FromChar(_inputManager.GetChar()).ToUpper()
+			Local l:Int = _cmd[_mark].Text.Length()
 		
-			If ( Not _availableCommands.Contains(chr)) Return
+			If ( Not _availableChars.Contains(chr)) Then
+				_console.Push("Symbol " + chr + " is incorrect")
+				Return
+			End If
+			
+			If (l = 1) Then
+				If ( Not _availableCommands.Contains(_cmd[_mark].Text + chr)) Then
+					_console.Push("Unknown command " + (_cmd[_mark].Text + chr))
+					Return
+				End If
+			End If
+			
+			If (l = 2) Then
+				If (_inputManager.GetChar() < 49 Or _inputManager.GetChar() > 57) Then
+					_console.Push("X must be numeric")
+					Return
+				End If
+			End If
 		
 			_cmd[_mark].Text += chr
+			l += 1
 			
-			If (_cmd[_mark].Text.Length() = 3) Then
+			If (l >= 3) Then
+				If (l > 3) Then
+					_cmd[_mark].Text = _cmd[_mark].Text[0 .. 3]
+				End If
+			
 				_mark = _mark + 1
 				
-				If (_mark = _MEMORY_LIMIT) Then
+				If (_mark = _memoryLimit) Then
 					_caret.visible = False
 					Return
 				End if
@@ -99,7 +137,6 @@ Public
 					_caret.visible = True
 					_caret.x += _charWidth
 					_mark -= 1
-					Return
 				End if
 			
 				If (_cmd[_mark].Text.Length() = 0) Then
@@ -118,8 +155,10 @@ Public
 	
 	Method AddModule:Void(robotModule:RobotModule)
 		For Local chr:Int = EachIn robotModule.name
-			_availableCommands.Insert(String.FromChar(chr))
+			_availableChars.Insert(String.FromChar(chr))
 		Next
+		
+		_availableCommands.Insert(robotModule.name)
 	End Method
 	
 	Method GetSource:String()
@@ -130,6 +169,10 @@ Public
 		Next
 		
 		Return source.Join(";")
+	End Method
+	
+	Method MemoryLimit:Void(limit:Int) Property
+		_memoryLimit = Min(limit, _MEMORY_LIMIT)
 	End Method
 
 End Class

@@ -32,7 +32,7 @@ Class PlayState Extends FlxState
 		
 		console = Console(Add(New Console(consoleCamera)))
 		
-		console.Push("--CONSOLE OUTPUT--")
+		console.Title("Stage 1")
 		
 		Local layoutCamera:FlxCamera = New FlxCamera(0, 0, FlxG.Width, FlxG.Height)
 		FlxG.AddCamera(layoutCamera)

@@ -52,6 +52,7 @@ Public
 		
 		For Local i:Int = 1 To LEVELS_COUNT
 			FlxAssetsManager.AddString("level_" + i, "levels/" + i + "/map.csv")
+			FlxAssetsManager.AddString("console_" + i, "levels/" + i + "/console.log")
 		Next
 		
 		For Local i:Int = 1 To CHIPS_COUNT

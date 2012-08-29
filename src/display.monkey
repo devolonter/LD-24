@@ -62,7 +62,7 @@ Public
 		levelMap = New LevelMap(Self)
 		levelMap.visible = False
 		
-		_currentLevel = 12
+		_currentLevel = 1
 		levelMap.LoadLevel(_currentLevel)
 		
 		Add(levelMap)
@@ -125,6 +125,7 @@ Public
 			Case CMD_WINDOW
 				_background.visible = True
 				codeEditor.visible = True
+				Console.GetInstance().Empty()
 				
 				If (context.layout.runButton.On) Then
 					context.layout.runButton.Checked = False
@@ -140,6 +141,7 @@ Public
 			
 			Case MAP_WINDOW
 				levelMap.visible = True
+				levelMap.PutInfo()
 				
 		End Select
 	

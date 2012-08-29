@@ -14,9 +14,9 @@ Private
 	
 	Global _Console:Console
 
-	Field _text:FlxText
+	Field _text:FlxText[_MAX_MESSAGES_COUNT]
 	
-	Field _textStack:StringStack
+	Field _mark:Int = 1
 	
 Public
 	Method New(camera:FlxCamera)
@@ -30,24 +30,39 @@ Public
 		
 		Add(New FlxSprite(0, 0, Assets.SPRITE_DISPLAY_CONSOLE))
 		
-		_text = New FlxText(10, 10, width - 20, "")
-		_text.SetFormat(Assets.FONT_LEKTON, 12)
+		For Local i:Int = 0 Until _MAX_MESSAGES_COUNT
+			_text[i] = New FlxText(10, 10 + i * 21, width - 20, "")
+			_text[i].SetFormat(Assets.FONT_LEKTON, 12)
+			Add(_text[i])
+		Next
 		
-		Add(_text)
-		
-		_textStack = New StringStack()
+		_text[0].Alignment = FlxText.ALIGN_CENTER
 		
 		_Console = Self
 	End Method
 	
-	Method Push:Void(message:String)
-		If (_textStack.Length() = _MAX_MESSAGES_COUNT) Then
-			_textStack.Remove(0)
-		End If
+	Method Title:Void(message:String)
+		_text[0].Text = "--" + message.ToUpper() + "--"
+	End Method
 	
-		_textStack.Push(message)
+	Method Push:Void(message:String)
+		If (_mark >= _MAX_MESSAGES_COUNT) Then
+			For Local i:Int = 2 Until _MAX_MESSAGES_COUNT
+				_text[i - 1].Text = _text[i].Text
+			Next
+		End If
 		
-		_text.Text = _textStack.Join("~n")
+		_mark = Min(_mark, _MAX_MESSAGES_COUNT - 1)
+		_text[_mark].Text = message
+		_mark += 1
+	End Method
+	
+	Method Empty:Void()
+		For Local i:Int = 1 Until _MAX_MESSAGES_COUNT
+			_text[i].Text = ""
+		Next
+		
+		_mark = 1
 	End Method
 	
 	Function GetInstance:Console()
