@@ -174,5 +174,14 @@ Public
 	Method MemoryLimit:Void(limit:Int) Property
 		_memoryLimit = Min(limit, _MEMORY_LIMIT)
 	End Method
+	
+	Method Empty:Void()
+		For Local i:Int = 0 Until _MEMORY_LIMIT
+			_cmd[i].Text = ""			
+		Next
+		
+		_mark = 0
+		_caret.Reset(_cmd[0].x, _cmd[0].y)
+	End Method
 
 End Class

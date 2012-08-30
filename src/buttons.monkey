@@ -116,7 +116,7 @@ Class RunButton Extends Button
 		LoadGraphic(Assets.BUTTON_RUN, True, False, 109, 48)
 	End Method
 	
-	Method OnTurnOn:Void()
+	Method OnTurnOn:Void()		
 		context.Exec()
 	End Method
 	
@@ -138,7 +138,7 @@ Class RevertButton Extends Button
 	End Method
 	
 	Method OnTurnOn:Void()
-		
+		context.levelMap.ReloadLevel()
 	End Method
 	
 	Method OnTurnOff:Void()

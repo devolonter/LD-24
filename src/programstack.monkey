@@ -39,13 +39,11 @@ Public
 		_hasError = False
 		
 		_commands = program.Split(";")
-		
-		Console.GetInstance().Push("Build successful!")
+		Console.GetInstance().Empty()
 		
 		If ( Not ExecNext()) Then
 			_complete = True
 			_hasError = True
-			Console.GetInstance().Push("Failed!")
 		End If
 	End Method
 	
@@ -54,6 +52,7 @@ Public
 		
 		If (_commands.Length() = _mark) Then
 			_complete = True
+			_mark = 0
 			Return
 		End If
 		
@@ -69,7 +68,7 @@ Public
 		Local cmd:String = _commands[_mark][0 .. 2]
 		Local execMod:RobotModule = _modules.Get(cmd)
 		
-		Console.GetInstance().Push("Exec " + _commands[_mark])
+		Console.GetInstance().Push("Exec " + _commands[_mark] + "...")
 		
 		If (execMod = Null) Then
 			Console.GetInstance().Push("Command " + cmd + " not found")
@@ -81,7 +80,6 @@ Public
 	
 	Method Stop:Void()
 		_complete = True
-		_hasError = False
 		ClearTweens()
 	End Method
 	

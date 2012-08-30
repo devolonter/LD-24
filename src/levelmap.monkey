@@ -37,6 +37,8 @@ Private
 	Field _laserDisabled:Bool
 	
 	Field _info:String[]
+	
+	Field _level:Int
 
 Public
 	Method New(context:Display)
@@ -44,6 +46,7 @@ Public
 	
 		player = New Player(0, 0, Self)
 		programStack = New ProgramStack(player)
+		player.ID = 10
 		
 		_chip = New FlxSprite(0, 0, Assets.SPRITE_CHIP)
 		_chip.ID = _CHIP_ID
@@ -57,11 +60,13 @@ Public
 		map = New FlxTilemap()
 		
 		Add(map)
-		Add(programStack)
 		Add(_button)
 		Add(_boxes)
 		Add(_chip)
 		Add(player)
+		
+		'programStack must be last. Update tweens reason
+		Add(programStack)
 	End Method
 	
 	Method LoadLevel:Void(level:Int)
@@ -161,6 +166,13 @@ Public
 		map.SetTileProperties(14, FlxObject.NONE,,, 4)
 		
 		_info = FlxAssetsManager.GetString("console_" + level).Split("~n")
+		_level = level
+		Console.GetInstance().Title("Stage " + level)
+		PutInfo()
+	End Method
+	
+	Method ReloadLevel:Void()
+		LoadLevel(_level)
 	End Method
 	
 	Method IsValid:Bool()
@@ -221,7 +233,7 @@ Public
 			box = Null
 		Next
 		
-		Return box		
+		Return box
 	End Method
 	
 	Method Update:Void()
@@ -241,9 +253,8 @@ Public
 				End If
 			End If
 		Next
-	
-		Super.Update()
 
+		Super.Update()
 		FlxG.Collide(player, map)
 		FlxG.Overlap(player, _chip, Self)
 		
@@ -258,6 +269,11 @@ Public
 				_button.Frame = 0
 				EnableLaser()
 			End If
+		End If
+		
+		If (player.x < 0 Or player.x > map.width - PlayState.TILE_SIZE Or player.y < 0 Or player.y > map.height - PlayState.TILE_SIZE) Then
+			programStack.Stop()
+			player.Reset(player.last.x, player.last.y)
 		End If
 	End Method
 	

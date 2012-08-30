@@ -8,7 +8,7 @@ Class Box Extends FlxSprite
 	
 	Field hole:FlxPoint
 	
-	Field tween:LinearMotion
+	Field tween:LinearMotion	
 	
 	Method New(x:Int = 0, y:Int = 0, graphic:String = "")
 		Super.New(x, y, graphic)

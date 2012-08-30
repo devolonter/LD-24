@@ -60,8 +60,6 @@ Class MfModule Extends RobotModule
 				
 		End Select
 		
-		Console.GetInstance().Push("Successful!")
-		
 		Return True
 	End Method
 
@@ -93,6 +91,7 @@ Private
 		Local p:Player = _programStack.Context
 		
 		VarTween(_tween).Tween(p, "angle", p.angle + 90, 0.5, Ease.SineInOut)
+		p.immovable = False
 		Self.value = value
 		
 		Return True
@@ -133,6 +132,7 @@ Private
 		Local p:Player = _programStack.Context
 		
 		VarTween(_tween).Tween(p, "angle", p.angle - 90, 0.5, Ease.SineInOut)
+		p.immovable = False
 		Self.value = value
 		
 		Return True

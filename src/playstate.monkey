@@ -30,17 +30,17 @@ Class PlayState Extends FlxState
 		Local consoleCamera:FlxCamera = New FlxCamera(454, 111, 171, 260)
 		FlxG.AddCamera(consoleCamera)
 		
-		console = Console(Add(New Console(consoleCamera)))
-		
-		console.Title("Stage 1")
+		console = Console(Add(New Console(consoleCamera)))		
 		
 		Local layoutCamera:FlxCamera = New FlxCamera(0, 0, FlxG.Width, FlxG.Height)
 		FlxG.AddCamera(layoutCamera)
 		
 		layout = Layout(Add(New Layout(layoutCamera, display)))
+		
+		display.Init()
 	End Method
 	
-	Method Update:Void()
+	Method Update:Void()	
 		If (layout.runButton.On And Not layout.displayButton.On) Then
 			layout.displayButton.Checked = True
 		End If

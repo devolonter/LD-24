@@ -61,10 +61,6 @@ Public
 		
 		levelMap = New LevelMap(Self)
 		levelMap.visible = False
-		
-		_currentLevel = 1
-		levelMap.LoadLevel(_currentLevel)
-		
 		Add(levelMap)
 		
 		_hertzLine = New FlxSprite(0, camera.Height)
@@ -105,6 +101,11 @@ Public
 		levelMap.programStack.AddModule(rtModule)
 	End Method
 	
+	Method Init:Void()
+		_currentLevel = 1
+		levelMap.LoadLevel(_currentLevel)
+	End Method
+	
 	Method Update:Void()
 		Super.Update()
 		
@@ -115,6 +116,7 @@ Public
 				If (levelMap.IsValid()) Then
 					_currentLevel += 1
 					levelMap.LoadLevel(_currentLevel)
+					codeEditor.Empty()
 				End If
 			End If
 		End If		
@@ -141,7 +143,7 @@ Public
 			
 			Case MAP_WINDOW
 				levelMap.visible = True
-				levelMap.PutInfo()
+				If (context.layout = Null Or Not context.layout.runButton.On) levelMap.PutInfo()
 				
 		End Select
 	
