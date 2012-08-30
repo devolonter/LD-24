@@ -102,7 +102,7 @@ Public
 	End Method
 	
 	Method Init:Void()
-		_currentLevel = 1
+		_currentLevel = 4
 		levelMap.LoadLevel(_currentLevel)
 	End Method
 	
@@ -168,7 +168,10 @@ Public
 	End Method
 	
 	Method Exec:Void()
-		If (levelMap.programStack.HasError()) levelMap.ReloadLevel()
+		If (levelMap.programStack.IsComplete() Or levelMap.programStack.HasError()) Then
+			levelMap.ReloadLevel()
+		End If
+		
 		levelMap.programStack.Exec(codeEditor.GetSource())
 	End Method
 	

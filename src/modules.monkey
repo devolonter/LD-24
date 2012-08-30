@@ -163,7 +163,7 @@ Public
 		Select p.angle
 			Case 0
 				_box.tween.SetMotionSpeed(_box.x, _box.y, _box.x,
-					_box.y -PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
+					_box.y -PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.QuadOut)
 
 			Case 90, -270
 				_box.tween.SetMotionSpeed(_box.x, _box.y, _box.x + PlayState.TILE_SIZE * value,
