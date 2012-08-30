@@ -13,8 +13,6 @@ Class RobotModule Abstract
 Private
 	Field _programStack:ProgramStack
 	
-	Field _tween:FlxTween
-	
 Public
 	Method Exec:Bool(value:Int) Abstract
 	
@@ -30,32 +28,29 @@ Class MfModule Extends RobotModule
 		name = "MF"
 	End Method
 	
-	Method SetContext:Void(stack:ProgramStack)
-		Super.SetContext(stack)
-		_tween = New LinearMotion(_programStack)
-		LinearMotion(_tween).SetObject(_programStack.Context)
-		_programStack.AddTween(_tween)
-		_programStack.Context.immovable = False
-	End Method
-	
 	Method Exec:Bool(value:Int)
 		If ( Not _programStack.Context) Return False
 	
 		Local p:Player = _programStack.Context
 		
+		Local tween:LinearMotion = New LinearMotion(_programStack)
+		_programStack.AddTween(tween)
+		tween.SetObject(p)
+		p.immovable = False
+		
 		Select p.angle
 			Case 0
-				LinearMotion(_tween).SetMotionSpeed(p.x, p.y, p.x, 
+				tween.SetMotionSpeed(p.x, p.y, p.x,
 					p.y -PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 			Case 90, -270
-				LinearMotion(_tween).SetMotionSpeed(p.x, p.y, p.x + PlayState.TILE_SIZE * value,
+				tween.SetMotionSpeed(p.x, p.y, p.x + PlayState.TILE_SIZE * value,
 					p.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 			Case 180, -180
-				LinearMotion(_tween).SetMotionSpeed(p.x, p.y, p.x,
+				tween.SetMotionSpeed(p.x, p.y, p.x,
 					p.y +PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 			
 			Case 270, -90
-				LinearMotion(_tween).SetMotionSpeed(p.x, p.y, p.x - PlayState.TILE_SIZE * value,
+				tween.SetMotionSpeed(p.x, p.y, p.x - PlayState.TILE_SIZE * value,
 					p.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 				
 		End Select
@@ -79,18 +74,18 @@ Private
 	
 	Method SetContext:Void(stack:ProgramStack)
 		Super.SetContext(stack)
-		
-		_tween = New VarTween(Self)
-		_programStack.AddTween(_tween)
-		
 		mfModule.SetContext(stack)
 	End Method
+
 	
 	Method Exec:Bool(value:Int)
 		If ( Not _programStack.Context) Return False
 		Local p:Player = _programStack.Context
 		
-		VarTween(_tween).Tween(p, "angle", p.angle + 90, 0.5, Ease.SineInOut)
+		Local tween:VarTween = New VarTween(Self)
+		_programStack.AddTween(tween)
+		
+		tween.Tween(p, "angle", p.angle + 90, 0.5, Ease.SineInOut)
 		p.immovable = False
 		Self.value = value
 		
@@ -120,10 +115,6 @@ Private
 	
 	Method SetContext:Void(stack:ProgramStack)
 		Super.SetContext(stack)
-		
-		_tween = New VarTween(Self)
-		_programStack.AddTween(_tween)
-		
 		mfModule.SetContext(stack)
 	End Method
 	
@@ -131,7 +122,10 @@ Private
 		If ( Not _programStack.Context) Return False
 		Local p:Player = _programStack.Context
 		
-		VarTween(_tween).Tween(p, "angle", p.angle - 90, 0.5, Ease.SineInOut)
+		Local tween:VarTween = New VarTween(Self)
+		_programStack.AddTween(tween)
+		
+		tween.Tween(p, "angle", p.angle - 90, 0.5, Ease.SineInOut)
 		p.immovable = False
 		Self.value = value
 		
@@ -165,8 +159,6 @@ Public
 		
 		_box = l.GetBox()
 		If (_box = Null) Return False
-		
-		_tween = _box.tween
 
 		Select p.angle
 			Case 0
@@ -187,8 +179,8 @@ Public
 		End Select
 
 		_box.active = True
-		_tween.complete = Self
-		_tween.Start()
+		_box.tween.complete = Self
+		_box.tween.Start()
 		Return True
 	End Method
 	
@@ -209,14 +201,6 @@ Public
 		name = "PL"
 	End Method
 	
-	Method SetContext:Void(stack:ProgramStack)
-		Super.SetContext(stack)
-		_tween = New LinearMotion()
-		LinearMotion(_tween).SetObject(_programStack.Context)
-		_programStack.AddTween(_tween)
-		_programStack.Context.immovable = False
-	End Method
-	
 	Method Exec:Bool(value:Int)
 		If ( Not _programStack.Context) Return False
 	
@@ -225,34 +209,39 @@ Public
 		
 		_box = l.GetBox()
 		If (_box = Null) Return False
+		
+		Local tween:LinearMotion = New LinearMotion(_programStack)
+		_programStack.AddTween(tween)
+		tween.SetObject(p)
+		p.immovable = False
 
 		Select p.angle
 			Case 0
 				_box.tween.SetMotionSpeed(_box.x, _box.y, _box.x,
 					_box.y +PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 					
-				LinearMotion(_tween).SetMotionSpeed(p.x, p.y, p.x,
+				tween.SetMotionSpeed(p.x, p.y, p.x,
 					p.y +PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 
 			Case 90, -270
 				_box.tween.SetMotionSpeed(_box.x, _box.y, _box.x - PlayState.TILE_SIZE * value,
 					_box.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 					
-				LinearMotion(_tween).SetMotionSpeed(p.x, p.y, p.x - PlayState.TILE_SIZE * value,
+				tween.SetMotionSpeed(p.x, p.y, p.x - PlayState.TILE_SIZE * value,
 					p.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 					
 			Case 180, -180
 				_box.tween.SetMotionSpeed(_box.x, _box.y, _box.x,
 					_box.y -PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 					
-				LinearMotion(_tween).SetMotionSpeed(p.x, p.y, p.x,
+				tween.SetMotionSpeed(p.x, p.y, p.x,
 					p.y -PlayState.TILE_SIZE * value, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 			
 			Case 270, -90
 				_box.tween.SetMotionSpeed(_box.x, _box.y, _box.x + PlayState.TILE_SIZE * value,
 					_box.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 					
-				LinearMotion(_tween).SetMotionSpeed(p.x, p.y, p.x + PlayState.TILE_SIZE * value,
+				tween.SetMotionSpeed(p.x, p.y, p.x + PlayState.TILE_SIZE * value,
 					p.y, PlayState.TILE_SIZE * 2, Ease.SineInOut)
 				
 		End Select
@@ -261,7 +250,7 @@ Public
 		_box.tween.complete = Self
 		
 		_box.tween.Start()
-		_tween.Start()
+		tween.Start()
 		Return True
 	End Method
 	
@@ -278,18 +267,14 @@ Class RtModule Extends RobotModule Implements FlxTweenListener
 		name = "RT"
 	End Method
 	
-	Method SetContext:Void(stack:ProgramStack)
-		Super.SetContext(stack)
-		
-		_tween = New VarTween(Self)
-		_programStack.AddTween(_tween)
-	End Method
-	
 	Method Exec:Bool(value:Int)
 		If ( Not _programStack.Context) Return False
 		Local p:Player = _programStack.Context
 		
-		VarTween(_tween).Tween(p, "angle", p.angle + 90 * value, 0.5 * value, Ease.SineInOut)
+		Local tween:VarTween = New VarTween(Self)
+		_programStack.AddTween(tween)
+		
+		tween.Tween(p, "angle", p.angle + 90 * value, 0.5 * value, Ease.SineInOut)
 		
 		Return True
 	End Method

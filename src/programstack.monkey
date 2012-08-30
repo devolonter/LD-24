@@ -81,7 +81,7 @@ Public
 	End Method
 	
 	Method Stop:Void(reason:String = "")
-		ClearTweens()
+		If (HasTween()) ClearTweens()
 		_complete = True
 		If (reason.Length() <> 0) _hasError = True
 		_mark = 0
