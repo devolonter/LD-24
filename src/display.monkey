@@ -110,6 +110,8 @@ Public
 		Super.Update()
 		
 		If (levelMap.programStack.IsComplete()) Then
+			context.layout.runButton.Checked = False
+		
 			If (levelMap.programStack.HasError()) Then
 				
 			Else
@@ -166,6 +168,7 @@ Public
 	End Method
 	
 	Method Exec:Void()
+		If (levelMap.programStack.HasError()) levelMap.ReloadLevel()
 		levelMap.programStack.Exec(codeEditor.GetSource())
 	End Method
 	

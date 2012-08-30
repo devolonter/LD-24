@@ -27,6 +27,7 @@ Public
 		_complete = False
 		_hasError = False
 		visible = False
+		active = False
 	End Method
 	
 	Method AddModule:Void(robotModule:RobotModule)
@@ -37,6 +38,7 @@ Public
 	Method Exec:Void(program:String)
 		_complete = False
 		_hasError = False
+		active = True
 		
 		_commands = program.Split(";")
 		Console.GetInstance().Empty()
@@ -78,14 +80,18 @@ Public
 		Return execMod.Exec(Int(_commands[_mark][2 .. 3]))
 	End Method
 	
-	Method Stop:Void()
-		_complete = True
+	Method Stop:Void(reason:String = "")
 		ClearTweens()
+		_complete = True
+		If (reason.Length() <> 0) _hasError = True
+		_mark = 0
+		active = False
 	End Method
 	
 	Method Clear:Void()
 		Stop()
 		_complete = False
+		_hasError = False
 	End Method
 	
 	Method IsComplete:Bool()

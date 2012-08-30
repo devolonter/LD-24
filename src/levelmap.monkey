@@ -39,6 +39,8 @@ Private
 	Field _info:String[]
 	
 	Field _level:Int
+	
+	Field robotCrashListener:RobotCrashListener
 
 Public
 	Method New(context:Display)
@@ -46,7 +48,6 @@ Public
 	
 		player = New Player(0, 0, Self)
 		programStack = New ProgramStack(player)
-		player.ID = 10
 		
 		_chip = New FlxSprite(0, 0, Assets.SPRITE_CHIP)
 		_chip.ID = _CHIP_ID
@@ -67,6 +68,8 @@ Public
 		
 		'programStack must be last. Update tweens reason
 		Add(programStack)
+		
+		robotCrashListener = New RobotCrashListener(programStack)
 	End Method
 	
 	Method LoadLevel:Void(level:Int)
@@ -161,6 +164,7 @@ Public
 			Next
 		End If
 		
+		map.SetTileProperties(3, FlxObject.ANY, robotCrashListener)
 		map.SetTileProperties(24, FlxObject.ANY, Self,, 16)
 		map.SetTileProperties(11, FlxObject.NONE)
 		map.SetTileProperties(14, FlxObject.NONE,,, 4)
@@ -169,6 +173,8 @@ Public
 		_level = level
 		Console.GetInstance().Title("Stage " + level)
 		PutInfo()
+		
+		programStack.Clear()
 	End Method
 	
 	Method ReloadLevel:Void()
@@ -361,6 +367,22 @@ Public
 		For Local s:String = EachIn _info
 			c.Push(s)
 		Next
+	End Method
+
+End Class
+
+Class RobotCrashListener Implements FlxTileHitListener
+
+Private
+	Field _stack:ProgramStack
+	
+Public
+	Method New(stack:ProgramStack)
+		_stack = stack
+	End Method
+	
+	Method OnTileHit:Void(tile:FlxTile, object:FlxObject)
+		_stack.Stop("Robot crashed")
 	End Method
 
 End Class
