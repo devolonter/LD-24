@@ -158,7 +158,10 @@ Public
 		Local l:LevelMap = p.Context
 		
 		_box = l.GetBox()
-		If (_box = Null) Return False
+		If (_box = Null) Then
+			Console.GetInstance().Push("Box not found")
+			Return False
+		End If
 
 		Select p.angle
 			Case 0

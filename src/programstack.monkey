@@ -19,6 +19,8 @@ Private
 	
 	Field _context:Player
 	
+	Field _reason:String
+	
 Public
 	Method New(context:Player)
 		_context = context
@@ -38,6 +40,7 @@ Public
 	Method Exec:Void(program:String)
 		_complete = False
 		_hasError = False
+		_reason = ""
 		active = True
 		
 		_commands = program.Split(";")
@@ -83,7 +86,10 @@ Public
 	Method Stop:Void(reason:String = "")
 		If (HasTween()) ClearTweens()
 		_complete = True
-		If (reason.Length() <> 0) _hasError = True
+		If (reason.Length() <> 0) Then
+			_hasError = True
+			_reason = reason
+		End If
 		_mark = 0
 		active = False
 	End Method
@@ -104,6 +110,10 @@ Public
 	
 	Method Context:Player() Property
 		Return _context
+	End Method
+	
+	Method Reason:String() Property
+		Return _reason
 	End Method
 
 End Class

@@ -245,6 +245,7 @@ Public
 	Method Update:Void()
 		_laserDisabled = False
 		FlxG.Collide(_boxes, map)
+		FlxG.Collide(_boxes, _boxes)
 		
 		For Local b:FlxBasic = EachIn _boxes
 			If (b.active) Then
@@ -262,6 +263,7 @@ Public
 
 		Super.Update()
 		FlxG.Collide(player, map)
+		FlxG.Collide(player, _boxes)
 		FlxG.Overlap(player, _chip, Self)
 		
 		If (_hasLaser) Then
@@ -382,7 +384,7 @@ Public
 	End Method
 	
 	Method OnTileHit:Void(tile:FlxTile, object:FlxObject)
-		_stack.Stop("Robot crashed")
+		_stack.Stop("collision occured")
 	End Method
 
 End Class

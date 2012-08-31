@@ -9,7 +9,7 @@ Import playstate
 Import modules
 Import help
 
-Class Display Extends FlxGroup Implements FlxTweenListener
+Class Display Extends FlxGroup Implements FlxTweenListener, ModuleAddListener
 
 	Const CMD_WINDOW:Int = 1
 	
@@ -38,6 +38,12 @@ Private
 	
 	Field _currentLevel:Int
 	
+	Field _fadeTween:NumTween
+	
+	Field _fadeTweenListener:FadeInTweenListener
+	
+	Field _errorOccured:Bool
+	
 Public
 	Method New(context:PlayState, camera:FlxCamera)
 		Cameras =[camera.ID]
@@ -46,6 +52,10 @@ Public
 		
 		_camera = camera
 		Self.context = context
+		
+		levelMap = New LevelMap(Self)
+		levelMap.visible = False
+		Add(levelMap)
 		
 		_background = New FlxSprite(0, 0, Assets.SPRITE_DISPLAY_MAIN)
 		_background.visible = False
@@ -59,9 +69,9 @@ Public
 		help.visible = False
 		Add(help)
 		
-		levelMap = New LevelMap(Self)
-		levelMap.visible = False
-		Add(levelMap)
+		_fadeTweenListener = New FadeInTweenListener(Self)
+		_fadeTween = New NumTween()
+		AddTween(_fadeTween)
 		
 		_hertzLine = New FlxSprite(0, camera.Height)
 		_hertzLine.MakeGraphic(camera.Width, camera.Height * 0.25)
@@ -88,21 +98,11 @@ Public
 		codeEditor.AddModule(mlModule)
 		levelMap.programStack.AddModule(mlModule)
 		
-		Local psModule:PsModule = New PsModule()
-		codeEditor.AddModule(psModule)
-		levelMap.programStack.AddModule(psModule)
-		
-		Local plModule:PlModule = New PlModule()
-		codeEditor.AddModule(plModule)
-		levelMap.programStack.AddModule(plModule)
-		
-		Local rtModule:RtModule = New RtModule()
-		codeEditor.AddModule(rtModule)
-		levelMap.programStack.AddModule(rtModule)
+		help.listener = Self
 	End Method
 	
 	Method Init:Void()
-		_currentLevel = 4
+		_currentLevel = 1
 		levelMap.LoadLevel(_currentLevel)
 	End Method
 	
@@ -113,15 +113,26 @@ Public
 			context.layout.runButton.Checked = False
 		
 			If (levelMap.programStack.HasError()) Then
-				
+			
+				If ( Not _errorOccured) Then
+					Console.GetInstance().Push("Stage failed")
+					If (levelMap.programStack.Reason) Console.GetInstance().Push("Reason: " + levelMap.programStack.Reason)
+					_errorOccured = True
+				End If
 			Else
-				If (levelMap.IsValid()) Then
-					_currentLevel += 1
-					levelMap.LoadLevel(_currentLevel)
-					codeEditor.Empty()
+				If (levelMap.IsValid() And Not _fadeTween.active) Then
+					Console.GetInstance().Push("Stage complete")
+					_background.visible = True
+					_fadeTween.complete = _fadeTweenListener
+					_fadeTween.Tween(0, 1, 1, Ease.SineInOut)
+					_fadeTween.Start()
 				End If
 			End If
-		End If		
+		End If
+		
+		If (_fadeTween.active) Then
+			_background.Alpha = _fadeTween.value
+		End If
 	End Method
 	
 	Method TurnOn:Void(window:Int)
@@ -129,27 +140,32 @@ Public
 			Case CMD_WINDOW
 				_background.visible = True
 				codeEditor.visible = True
+				codeEditor.active = True
 				Console.GetInstance().Empty()
 				
 				If (context.layout.runButton.On) Then
 					context.layout.runButton.Checked = False
+					levelMap.ReloadLevel()
 				End If
 			
 			Case HELP_WINDOW
 				_background.visible = True
 				help.visible = True
+				help.active = True
 				
 				If (context.layout.runButton.On) Then
 					context.layout.runButton.Checked = False
+					levelMap.ReloadLevel()
 				End If
 			
 			Case MAP_WINDOW
 				levelMap.visible = True
+				levelMap.active = True
 				If (context.layout = Null Or Not context.layout.runButton.On) levelMap.PutInfo()
 				
 		End Select
 	
-		_camera.Shake(0.005, 0.2)
+		_camera.Shake(0.005, 0.1)
 	End Method
 	
 	Method TurnOff:Void(window:Int)
@@ -157,13 +173,17 @@ Public
 			Case CMD_WINDOW
 				_background.visible = False
 				codeEditor.visible = False
+				codeEditor.active = False
+				
 			
 			Case HELP_WINDOW
 				_background.visible = False
 				help.visible = False
+				help.active = False
 			
 			Case MAP_WINDOW
 				levelMap.visible = False
+				levelMap.active = False
 		End Select
 	End Method
 	
@@ -172,6 +192,7 @@ Public
 			levelMap.ReloadLevel()
 		End If
 		
+		_errorOccured = False
 		levelMap.programStack.Exec(codeEditor.GetSource())
 	End Method
 	
@@ -187,5 +208,65 @@ Public
 		hertzLineSmall.AddTween(hertzSmallTween)
 		Add(hertzLineSmall)
 	End Method
+	
+	Method OnModuleAdded:Void(m:Int)
+		Select m
+			Case 3
+				Local psModule:PsModule = New PsModule()
+				codeEditor.AddModule(psModule)
+				levelMap.programStack.AddModule(psModule)
+				
+			Case 4
+				Local plModule:PlModule = New PlModule()
+				codeEditor.AddModule(plModule)
+				levelMap.programStack.AddModule(plModule)
+				
+			Case 5
+				Local rtModule:RtModule = New RtModule()
+				codeEditor.AddModule(rtModule)
+				levelMap.programStack.AddModule(rtModule)
+		End Select
+	End Method
 
+End Class
+
+Class FadeInTweenListener Implements FlxTweenListener
+
+Private
+	Field _display:Display
+	
+	Field _fadeOutListener:FadeOutTweenListener
+	
+	Method New(context:Display)
+		_display = context
+		_fadeOutListener = New FadeOutTweenListener(context)
+	End Method
+
+	Method OnTweenComplete:Void()
+		_display._currentLevel += 1
+		_display.levelMap.LoadLevel(_display._currentLevel)
+		_display.codeEditor.Empty()
+	
+		_display._fadeTween.complete = _fadeOutListener
+		_display._fadeTween.Tween(1, 0, 1, Ease.SineInOut)
+		_display._fadeTween.Start()
+	End Method
+	
+End Class
+
+Class FadeOutTweenListener Implements FlxTweenListener
+
+Private
+	Field _display:Display
+	
+	Method New(context:Display)
+		_display = context
+	End Method
+
+	Method OnTweenComplete:Void()
+		_display._fadeTween.complete = Null
+		_display._background.Alpha = 1
+		_display._background.visible = False
+	End Method
+	
 End Class

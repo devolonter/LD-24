@@ -5,13 +5,16 @@ Import game
 
 Class Help Extends FlxGroup
 
+	Field listener:ModuleAddListener
+
 Private
 	Field _instructions:FlxSprite[Game.CHIPS_COUNT]
 	
 	Field _moduleNames:String[] =["", "", "", "PUSH", "PULL", "ROTATE"]
 	
 	Field _mark:Int = 3
-
+	
+Public
 	Method New(x:Int, y:Int)
 	
 		Local col:Int = 0
@@ -35,10 +38,18 @@ Private
 	Method OpenNextModule:Void()
 		_instructions[_mark].visible = True
 		If (_moduleNames[_mark].Length() > 0) Then
-			Console.GetInstance().Push("Module " + _moduleNames[_mark] + " was added! See manual")
+			Console.GetInstance().Push("Module " + _moduleNames[_mark] + " was added")
+			Console.GetInstance().Push("see RTFM")
+			listener.OnModuleAdded(_mark)
 		End If
 		
 		_mark += 1
 	End Method
 
 End Class
+
+Interface ModuleAddListener
+	
+	Method OnModuleAdded:Void(m:Int)
+
+End Interface
