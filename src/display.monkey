@@ -44,6 +44,14 @@ Private
 	
 	Field _errorOccured:Bool
 	
+	Field _intro:FlxGroup
+	
+	Field _introText:FlxText
+	
+	Field _introTween:NumTween
+	
+	Field _isIntro:Bool
+	
 Public
 	Method New(context:PlayState, camera:FlxCamera)
 		Cameras =[camera.ID]
@@ -55,11 +63,30 @@ Public
 		
 		levelMap = New LevelMap(Self)
 		levelMap.visible = False
+		levelMap.active = False
 		Add(levelMap)
 		
 		_background = New FlxSprite(0, 0, Assets.SPRITE_DISPLAY_MAIN)
-		_background.visible = False
 		Add(_background)
+		
+		_intro = New FlxGroup(2)
+		
+		Local sp:FlxSprite = New FlxSprite(0, 0)
+		sp.LoadGraphic(Assets.SPRITE_INTRO, True,, 157, 136)
+		sp.AddAnimation("unbox",[0, 1, 2], 1)
+		sp.Reset( (width - sp.width) * 0.5, (height * 0.85 - sp.height) * 0.5)
+		sp.Play("unbox")
+		_intro.Add(sp)
+		
+		_introText = New FlxText(0, sp.y + sp.height + 50, width, "PRESS ENTER TO START")
+		_introText.SetFormat(Assets.FONT_PROFONT, 18,, FlxText.ALIGN_CENTER)
+		_intro.Add(_introText)
+		
+		_introTween = New NumTween(, FlxTween.PINGPONG)
+		_introTween.Tween(1, 0, 1.5, Ease.SineInOut)
+		_intro.AddTween(_introTween, True)
+		
+		Add(_intro)
 		
 		codeEditor = New CodeEditor(15, 15, width - 30, height)
 		codeEditor.visible = False
@@ -99,15 +126,34 @@ Public
 		levelMap.programStack.AddModule(mlModule)
 		
 		help.listener = Self
+		_isIntro = True
 	End Method
 	
 	Method Init:Void()
 		_currentLevel = 1
+		levelMap.active = True
 		levelMap.LoadLevel(_currentLevel)
 	End Method
 	
 	Method Update:Void()
 		Super.Update()
+		
+		If (_isIntro) Then
+			_introText.Alpha = _introTween.value
+			
+			If (FlxG.Keys.JustPressed(KEY_ENTER)) Then
+				_isIntro = False
+				_intro.RemoveTween(_introTween, True)
+				_intro.Kill()
+				Remove(_intro, True)
+				_background.visible = False
+				
+				Init()
+				context.layout.displayButton.Checked = True				
+			End If
+			
+			Return
+		End If
 		
 		If (levelMap.programStack.IsComplete()) Then
 			context.layout.runButton.Checked = False
@@ -116,17 +162,26 @@ Public
 			
 				If ( Not _errorOccured) Then
 					Console.GetInstance().Push("Stage failed")
-					If (levelMap.programStack.Reason) Console.GetInstance().Push("Reason: " + levelMap.programStack.Reason)
+					If (levelMap.programStack.Reason) Console.GetInstance().Push(levelMap.programStack.Reason)
 					_errorOccured = True
 				End If
 			Else
-				If (levelMap.IsValid() And Not _fadeTween.active) Then
+				Local isValid:Bool = levelMap.IsValid()
+				
+				If (isValid And Not _fadeTween.active) Then
 					Console.GetInstance().Push("Stage complete")
 					_background.visible = True
 					_fadeTween.complete = _fadeTweenListener
 					_fadeTween.Tween(0, 1, 1, Ease.SineInOut)
 					_fadeTween.Start()
+					
+				ElseIf( Not isValid And Not _errorOccured)
+					Console.GetInstance().Push("Stage failed")
+					Console.GetInstance().Push("Target was not reached")
+					_errorOccured = True
 				End If
+				
+				
 			End If
 		End If
 		
@@ -226,6 +281,10 @@ Public
 				codeEditor.AddModule(rtModule)
 				levelMap.programStack.AddModule(rtModule)
 		End Select
+	End Method
+	
+	Method IsIntro:Bool() Property
+		Return _isIntro
 	End Method
 
 End Class

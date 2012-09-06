@@ -17,6 +17,8 @@ Class Button Extends FlxButton Implements FlxButtonClickListener Abstract
 	End Method
 	
 	Method Checked:Void(value:Bool) Property
+		If (context.IsIntro) Return
+	
 		If (value And Not On) Then
 			OnButtonClick()
 		ElseIf( Not value And On)
@@ -28,9 +30,12 @@ Class Button Extends FlxButton Implements FlxButtonClickListener Abstract
 	Method Update:Void()
 		Super.Update()
 		If (On) Frame = PRESSED
+		If (context.IsIntro) Frame = NORMAL
 	End Method
 	
 	Method OnButtonClick:Void()
+		If (context.IsIntro) Return
+	
 		If (group <> Null)
 			Local b:Button
 		

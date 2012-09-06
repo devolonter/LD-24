@@ -36,8 +36,6 @@ Class PlayState Extends FlxState
 		FlxG.AddCamera(layoutCamera)
 		
 		layout = Layout(Add(New Layout(layoutCamera, display)))
-		
-		display.Init()
 	End Method
 	
 	Method Update:Void()	

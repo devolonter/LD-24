@@ -49,6 +49,9 @@ Public
 		If ( Not ExecNext()) Then
 			_complete = True
 			_hasError = True
+			If (program = "") Then
+				_reason = "Target was not reached"
+			End If
 		End If
 	End Method
 	

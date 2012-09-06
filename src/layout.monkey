@@ -20,8 +20,7 @@ Class Layout Extends FlxGroup
 		
 		toolbarButtons.Add(New CmdButton(453, 33, display, toolbarButtons))
 		toolbarButtons.Add(New RtfmButton(513, 33, display, toolbarButtons))
-		displayButton = Button(toolbarButtons.Add(New DisplayButton(573, 33, display, toolbarButtons)))
-		displayButton.Checked = True
+		displayButton = Button(toolbarButtons.Add(New DisplayButton(573, 33, display, toolbarButtons)))		
 		
 		runButton = Button(actionButtons.Add(New RunButton(453, 399, display, actionButtons)))
 		actionButtons.Add(New RevertButton(575, 399, display, actionButtons))

@@ -47,13 +47,16 @@ Public
 		_context = context
 	
 		player = New Player(0, 0, Self)
+		player.Kill()
 		programStack = New ProgramStack(player)
 		
 		_chip = New FlxSprite(0, 0, Assets.SPRITE_CHIP)
+		_chip.Kill()
 		_chip.ID = _CHIP_ID
 		
 		_button = New FlxSprite()
 		_button.LoadGraphic(Assets.SPRITE_BUTTON, True,, PlayState.TILE_SIZE, PlayState.TILE_SIZE)
+		_button.Kill()
 		_button.ID = _BUTTON_ID
 		
 		_boxes = New FlxGroup()
