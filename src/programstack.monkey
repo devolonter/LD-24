@@ -71,7 +71,7 @@ Public
 	End Method
 	
 	Method ExecNext:Bool()
-		If (_commands[_mark].Length() <> 3) Return False
+		If (_complete Or _commands[_mark].Length() <> 3) Return False
 	
 		Local cmd:String = _commands[_mark][0 .. 2]
 		Local execMod:RobotModule = _modules.Get(cmd)

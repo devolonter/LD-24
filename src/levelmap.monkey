@@ -23,6 +23,8 @@ Private
 	Const _BUTTON_ID:Int = 2
 	
 	Const _BOX_ID:Int = 3
+	
+	Const _PLAYER_ID:Int = 4
 
 	Field _chip:FlxSprite
 	
@@ -39,8 +41,6 @@ Private
 	Field _info:String[]
 	
 	Field _level:Int
-	
-	Field robotCrashListener:RobotCrashListener
 
 Public
 	Method New(context:Display)
@@ -48,6 +48,8 @@ Public
 	
 		player = New Player(0, 0, Self)
 		player.Kill()
+		player.ID = _PLAYER_ID
+		
 		programStack = New ProgramStack(player)
 		
 		_chip = New FlxSprite(0, 0, Assets.SPRITE_CHIP)
@@ -71,8 +73,6 @@ Public
 		
 		'programStack must be last. Update tweens reason
 		Add(programStack)
-		
-		robotCrashListener = New RobotCrashListener(programStack)
 	End Method
 	
 	Method LoadLevel:Void(level:Int)
@@ -167,8 +167,10 @@ Public
 			Next
 		End If
 		
-		map.SetTileProperties(3, FlxObject.ANY, robotCrashListener)
+		map.SetTileProperties(3, FlxObject.ANY, Self)
+		map.SetTileProperties(18, FlxObject.ANY, Self,, 6)
 		map.SetTileProperties(24, FlxObject.ANY, Self,, 16)
+		
 		map.SetTileProperties(11, FlxObject.NONE)
 		map.SetTileProperties(14, FlxObject.NONE,,, 4)
 		
@@ -191,22 +193,53 @@ Public
 	
 	Method OnTileHit:Void(tile:FlxTile, object:FlxObject)
 		If (object.ID = _BOX_ID) Then
-			If (tile.index > 23 And tile.index < 40) Then
+			If (tile.index = 3) Then
+				Box(object).tween.Finish()
+				programStack.Stop("Box was crashed")
+				
+			ElseIf(tile.index > 23 And tile.index < 40) Then
 				object.allowCollisions = FlxObject.NONE
 				Box(object).hole.x = tile.x
 				Box(object).hole.y = tile.y
+				
+			ElseIf(tile.index > 17 And tile.index < 24) Then
+				Box(object).tween.Finish()
+				programStack.Stop("Box was crashed")
+			End If
+			
+		ElseIf(object.ID = _PLAYER_ID) Then
+			If (tile.index = 3) Then
+				programStack.Stop("Collision occured")
+				
+			ElseIf(tile.index > 23 And tile.index < 40) Then
+				programStack.Stop("Collision occured")
+				
+			ElseIf(tile.index > 17 And tile.index < 24) Then
+				programStack.Stop("Collision occured")
 			End If
 		End If
 	End Method
 	
 	Method OnOverlapNotify:Void(object1:FlxObject, object2:FlxObject)
-		Select object2.ID
-			Case _CHIP_ID
-				object2.Kill()
-				_context.help.OpenNextModule()
-			Case _BUTTON_ID
-				_laserDisabled = True
-		End Select
+		If (object1.ID = _PLAYER_ID) Then
+			Select object2.ID
+				Case _CHIP_ID
+					object2.Kill()
+					_context.help.OpenNextModule()
+				Case _BUTTON_ID
+					_laserDisabled = True
+			End Select
+			
+		ElseIf(object1.ID = _BOX_ID) Then
+			Select object2.ID
+				Case _BUTTON_ID
+					_laserDisabled = True
+				Case _BOX_ID
+					Box(object2).tween.Finish()
+					Box(object1).tween.Finish()
+					programStack.Stop("Box was crashed")
+			End Select
+		End If
 	End Method
 	
 	Method GetBox:Box()
@@ -248,7 +281,7 @@ Public
 	Method Update:Void()
 		_laserDisabled = False
 		FlxG.Collide(_boxes, map)
-		FlxG.Collide(_boxes, _boxes)
+		FlxG.Collide(_boxes, _boxes, Self)
 		
 		For Local b:FlxBasic = EachIn _boxes
 			If (b.active) Then
@@ -372,22 +405,6 @@ Public
 		For Local s:String = EachIn _info
 			c.Push(s)
 		Next
-	End Method
-
-End Class
-
-Class RobotCrashListener Implements FlxTileHitListener
-
-Private
-	Field _stack:ProgramStack
-	
-Public
-	Method New(stack:ProgramStack)
-		_stack = stack
-	End Method
-	
-	Method OnTileHit:Void(tile:FlxTile, object:FlxObject)
-		_stack.Stop("collision occured")
 	End Method
 
 End Class
