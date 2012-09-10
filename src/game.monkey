@@ -59,6 +59,10 @@ Public
 		For Local i:Int = 1 To CHIPS_COUNT
 			FlxAssetsManager.AddImage("help_" + i, "images/instructions/" + i + ".png")
 		Next
+		
+		FlxAssetsManager.AddSound(Assets.SOUND_KEY, "sounds/key." + FlxSound.GetValidExt())
+		
+		FlxAssetsManager.AddMusic(Assets.MUSIC_CODENAME_E, "music/codename_e." + FlxMusic.GetValidExt())
 	End Method
 	
 	Method OnUpdate:Int()

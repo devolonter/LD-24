@@ -109,6 +109,8 @@ Public
 					Return
 				End If
 			End If
+			
+			FlxG.Play(Assets.SOUND_KEY, 0.5)
 		
 			_cmd[_mark].Text += chr
 			l += 1
@@ -133,6 +135,8 @@ Public
 			
 		Else
 			If (_inputManager.GetChar() = CHAR_BACKSPACE) Then
+				FlxG.Play(Assets.SOUND_KEY, .5)
+			
 				If (_mark = _MEMORY_LIMIT) Then
 					_caret.visible = True
 					_caret.x += _charWidth

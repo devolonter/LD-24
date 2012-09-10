@@ -33,5 +33,9 @@ Class Assets
 	Const BUTTON_RUN:String = "button_run"
 	
 	Const BUTTON_REVERT:String = "button_revert"
+	
+	Const SOUND_KEY:String = "key"
+	
+	Const MUSIC_CODENAME_E:String = "codename_e"
 
 End Class

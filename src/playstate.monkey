@@ -36,6 +36,8 @@ Class PlayState Extends FlxState
 		FlxG.AddCamera(layoutCamera)
 		
 		layout = Layout(Add(New Layout(layoutCamera, display)))
+		
+		FlxG.PlayMusic(Assets.MUSIC_CODENAME_E)
 	End Method
 	
 	Method Update:Void()	

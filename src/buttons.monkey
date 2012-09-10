@@ -9,15 +9,19 @@ Class Button Extends FlxButton Implements FlxButtonClickListener Abstract
 	Field group:FlxGroup
 	
 	Field context:Display
+	
+	Field manually:Bool
 
 	Method New(x:Float = 0, y:Float = 0, context:Display, group:FlxGroup)
 		Super.New(x, y, "", Self)
 		Self.group = group
 		Self.context = context
+		manually = True
 	End Method
 	
 	Method Checked:Void(value:Bool) Property
 		If (context.IsIntro) Return
+		manually = False
 	
 		If (value And Not On) Then
 			OnButtonClick()
@@ -54,7 +58,9 @@ Class Button Extends FlxButton Implements FlxButtonClickListener Abstract
 			End If
 		Else
 			OnTurnOn()
-		End if
+		End If
+		
+		manually = True
 	End Method
 	
 	Method OnTurnOn:Void() Abstract
@@ -71,6 +77,7 @@ Class CmdButton Extends Button
 	End Method
 	
 	Method OnTurnOn:Void()
+		FlxG.Play(Assets.SOUND_KEY)
 		context.TurnOn(Display.CMD_WINDOW)
 	End Method
 	
@@ -88,6 +95,7 @@ Class RtfmButton Extends Button
 	End Method
 	
 	Method OnTurnOn:Void()
+		FlxG.Play(Assets.SOUND_KEY)
 		context.TurnOn(Display.HELP_WINDOW)
 	End Method
 	
@@ -105,6 +113,7 @@ Class DisplayButton Extends Button
 	End Method
 	
 	Method OnTurnOn:Void()
+		If (manually) FlxG.Play(Assets.SOUND_KEY)
 		context.TurnOn(Display.MAP_WINDOW)
 	End Method
 	
@@ -121,7 +130,8 @@ Class RunButton Extends Button
 		LoadGraphic(Assets.BUTTON_RUN, True, False, 109, 48)
 	End Method
 	
-	Method OnTurnOn:Void()		
+	Method OnTurnOn:Void()
+		FlxG.Play(Assets.SOUND_KEY)
 		context.Exec()
 	End Method
 	
@@ -143,6 +153,7 @@ Class RevertButton Extends Button
 	End Method
 	
 	Method OnTurnOn:Void()
+		FlxG.Play(Assets.SOUND_KEY)
 		context.levelMap.ReloadLevel()
 	End Method
 	

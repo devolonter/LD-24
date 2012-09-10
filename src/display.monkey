@@ -142,6 +142,8 @@ Public
 			_introText.Alpha = _introTween.value
 			
 			If (FlxG.Keys.JustPressed(KEY_ENTER)) Then
+				FlxG.Play(Assets.SOUND_KEY)
+			
 				_isIntro = False
 				_intro.RemoveTween(_introTween, True)
 				_intro.Kill()
@@ -192,7 +194,7 @@ Public
 	
 	Method TurnOn:Void(window:Int)
 		Select window
-			Case CMD_WINDOW
+			Case CMD_WINDOW			
 				_background.visible = True
 				codeEditor.visible = True
 				codeEditor.active = True
