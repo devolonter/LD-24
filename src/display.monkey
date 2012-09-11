@@ -130,9 +130,11 @@ Public
 	End Method
 	
 	Method Init:Void()
-		_currentLevel = 1
+		_currentLevel = 4
 		levelMap.active = True
 		levelMap.LoadLevel(_currentLevel)
+		help.OpenNextModule()
+		help.OpenNextModule()
 	End Method
 	
 	Method Update:Void()

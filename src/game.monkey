@@ -61,6 +61,9 @@ Public
 		Next
 		
 		FlxAssetsManager.AddSound(Assets.SOUND_KEY, "sounds/key." + FlxSound.GetValidExt())
+		FlxAssetsManager.AddSound(Assets.SOUND_MOVE, "sounds/move." + FlxSound.GetValidExt())
+		FlxAssetsManager.AddSound(Assets.SOUND_LASER_ON, "sounds/laser_on." + FlxSound.GetValidExt())
+		FlxAssetsManager.AddSound(Assets.SOUND_LASER_OFF, "sounds/laser_off." + FlxSound.GetValidExt())
 		
 		FlxAssetsManager.AddMusic(Assets.MUSIC_CODENAME_E, "music/codename_e." + FlxMusic.GetValidExt())
 	End Method

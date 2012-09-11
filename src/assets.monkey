@@ -36,6 +36,12 @@ Class Assets
 	
 	Const SOUND_KEY:String = "key"
 	
+	Const SOUND_MOVE:String = "move"
+	
+	Const SOUND_LASER_ON:String = "laser_on"
+	
+	Const SOUND_LASER_OFF:String = "laser_off"
+	
 	Const MUSIC_CODENAME_E:String = "codename_e"
 
 End Class

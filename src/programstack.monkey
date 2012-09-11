@@ -46,6 +46,8 @@ Public
 		_commands = program.Split(";")
 		Console.GetInstance().Empty()
 		
+		_context.Run()
+		
 		If ( Not ExecNext()) Then
 			_complete = True
 			_hasError = True
@@ -59,6 +61,7 @@ Public
 		_mark += 1
 		
 		If (_commands.Length() = _mark) Then
+			_context.Stop()
 			_complete = True
 			_mark = 0
 			Return
@@ -71,7 +74,16 @@ Public
 	End Method
 	
 	Method ExecNext:Bool()
-		If (_complete Or _commands[_mark].Length() <> 3) Return False
+		If (_complete) Then
+			_context.Stop()
+			Return False
+		End If
+		
+		If (_commands[_mark].Length() <> 3) Then
+			_context.Stop()
+			_reason = "Unknown command: " + _commands[_mark].Length()
+			Return False
+		End If
 	
 		Local cmd:String = _commands[_mark][0 .. 2]
 		Local execMod:RobotModule = _modules.Get(cmd)
@@ -79,7 +91,8 @@ Public
 		Console.GetInstance().Push("Exec " + _commands[_mark] + "...")
 		
 		If (execMod = Null) Then
-			Console.GetInstance().Push("Command " + cmd + " not found")
+			_context.Stop()
+			_reason = "Unknown command: " + cmd
 			Return False
 		End If
 		
@@ -87,6 +100,8 @@ Public
 	End Method
 	
 	Method Stop:Void(reason:String = "")
+		_context.Stop()
+	
 		If (HasTween()) ClearTweens()
 		_complete = True
 		If (reason.Length() <> 0) Then

@@ -159,9 +159,15 @@ Public
 				map.SetTileByIndex(i, 0)
 				box = Box(_boxes.Recycle(ClassInfo(Box.ClassObject)))
 				box.LoadGraphic(Assets.SPRITE_BOX)
+				
+				box.width -= 2
+				box.height -= 2
+				box.offset.x = 1
+				box.offset.y = 1
+				
 				box.ID = _BOX_ID
 				box.active = False
-				box.Reset(tilesCoord.Get(offset).x, tilesCoord.Get(offset).y)
+				box.Reset(tilesCoord.Get(offset).x + 1, tilesCoord.Get(offset).y + 1)
 				
 				offset += 1
 			Next
@@ -199,8 +205,8 @@ Public
 				
 			ElseIf(tile.index > 23 And tile.index < 40) Then
 				object.allowCollisions = FlxObject.NONE
-				Box(object).hole.x = tile.x
-				Box(object).hole.y = tile.y
+				Box(object).hole.x = tile.x + 1
+				Box(object).hole.y = tile.y + 1
 				
 			ElseIf(tile.index > 17 And tile.index < 24) Then
 				Box(object).tween.Finish()
@@ -228,6 +234,9 @@ Public
 					_context.help.OpenNextModule()
 				Case _BUTTON_ID
 					_laserDisabled = True
+				Case _BOX_ID
+					Box(object2).tween.Finish()
+					programStack.Stop("Collision occured")
 			End Select
 			
 		ElseIf(object1.ID = _BOX_ID) Then
@@ -299,7 +308,7 @@ Public
 
 		Super.Update()
 		FlxG.Collide(player, map)
-		FlxG.Collide(player, _boxes)
+		FlxG.Collide(player, _boxes, Self)
 		FlxG.Overlap(player, _chip, Self)
 		
 		If (_hasLaser) Then
@@ -322,6 +331,8 @@ Public
 	End Method
 	
 	Method DisableLaser:Void()
+		FlxG.Play(Assets.SOUND_LASER_OFF)
+	
 		Local tiles:Stack<Int>
 	
 		For Local i:Int = 18 To 23
@@ -356,6 +367,8 @@ Public
 	End Method
 	
 	Method EnableLaser:Void()
+		FlxG.Play(Assets.SOUND_LASER_ON)
+	
 		Local tiles:Stack<Int>
 	
 		For Local i:Int = 14 To 17

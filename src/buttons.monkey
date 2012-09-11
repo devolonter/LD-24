@@ -125,6 +125,9 @@ End Class
 
 Class RunButton Extends Button
 
+Private
+	
+
 	Method New(x:Float = 0, y:Float = 0, context:Display, group:FlxGroup)
 		Super.New(x, y, context, group)
 		LoadGraphic(Assets.BUTTON_RUN, True, False, 109, 48)
@@ -135,7 +138,7 @@ Class RunButton Extends Button
 		context.Exec()
 	End Method
 	
-	Method OnTurnOff:Void()		
+	Method OnTurnOff:Void()
 	End Method
 	
 End Class
