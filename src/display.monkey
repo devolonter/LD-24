@@ -324,6 +324,7 @@ Private
 			_display.codeEditor.Empty()
 			Console.GetInstance().Empty()
 			
+			Console.GetInstance().Title("")
 			Console.GetInstance().Push("All available tests")
 			Console.GetInstance().Push("were completed")
 			Console.GetInstance().Push("Codename E. was placed")

@@ -182,6 +182,7 @@ Public
 		
 		map.SetTileProperties(11, FlxObject.NONE)
 		map.SetTileProperties(14, FlxObject.NONE,,, 4)
+		map.SetTileProperties(40, FlxObject.NONE,,, 2)
 		
 		_info = FlxAssetsManager.GetString("console_" + level).Split("~n")
 		_level = level
