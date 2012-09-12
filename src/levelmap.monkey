@@ -41,6 +41,8 @@ Private
 	Field _info:String[]
 	
 	Field _level:Int
+	
+	Field _hasChip:Bool
 
 Public
 	Method New(context:Display)
@@ -77,6 +79,7 @@ Public
 	
 	Method LoadLevel:Void(level:Int)
 		_hasLaser = False
+		_hasChip = False
 		_laserDisabled = False
 		
 		_chip.Kill()
@@ -118,6 +121,7 @@ Public
 			
 			If (tiles) Then
 				_chip.Reset(tilesCoord.Get(0).x, tilesCoord.Get(0).y)
+				_hasChip = True
 			
 				Select i
 					Case 12
@@ -193,13 +197,32 @@ Public
 	
 	Method IsValid:Bool()
 		Local index:Int = map.GetTile( (player.x + player.width * 0.5) / PlayState.TILE_SIZE, (player.y + player.height * 0.5) / PlayState.TILE_SIZE)
-		Return(index = 2)
+		
+		If (index = 2) Then
+			If (_hasChip) Then
+				If ( Not _chip.alive) Then
+					_context.help.OpenNextModule()
+					Return True
+				End If
+				
+				Return False
+			End If
+			
+			Return True
+		End If
+		
+		Return False
+	End Method
+	
+	Method ChipIsMissed:Bool()
+		Return _chip.alive
 	End Method
 	
 	Method OnTileHit:Void(tile:FlxTile, object:FlxObject)
 		If (object.ID = _BOX_ID) Then
 			If (tile.index = 3) Then
 				Box(object).tween.Finish()
+				FlxG.Play(Assets.SOUND_HIT)
 				programStack.Stop("Box was crashed")
 				
 			ElseIf(tile.index > 23 And tile.index < 40) Then
@@ -209,17 +232,21 @@ Public
 				
 			ElseIf(tile.index > 17 And tile.index < 24) Then
 				Box(object).tween.Finish()
+				FlxG.Play(Assets.SOUND_HIT)
 				programStack.Stop("Box was crashed")
 			End If
 			
 		ElseIf(object.ID = _PLAYER_ID) Then
 			If (tile.index = 3) Then
+				FlxG.Play(Assets.SOUND_HIT)
 				programStack.Stop("Collision occured")
 				
 			ElseIf(tile.index > 23 And tile.index < 40) Then
+				FlxG.Play(Assets.SOUND_HIT)
 				programStack.Stop("Collision occured")
 				
 			ElseIf(tile.index > 17 And tile.index < 24) Then
+				FlxG.Play(Assets.SOUND_HIT)
 				programStack.Stop("Collision occured")
 			End If
 		End If
@@ -230,11 +257,13 @@ Public
 			Select object2.ID
 				Case _CHIP_ID
 					object2.Kill()
-					_context.help.OpenNextModule()
+					FlxG.Play(Assets.SOUND_MODULE)
+					_context.help.NextModuleInfo()
 				Case _BUTTON_ID
 					_laserDisabled = True
 				Case _BOX_ID
 					Box(object2).tween.Finish()
+					FlxG.Play(Assets.SOUND_HIT)
 					programStack.Stop("Collision occured")
 			End Select
 			
@@ -245,6 +274,7 @@ Public
 				Case _BOX_ID
 					Box(object2).tween.Finish()
 					Box(object1).tween.Finish()
+					FlxG.Play(Assets.SOUND_HIT)
 					programStack.Stop("Box was crashed")
 			End Select
 		End If

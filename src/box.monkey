@@ -18,5 +18,11 @@ Class Box Extends FlxSprite
 		immovable = False
 		AddTween(tween)
 	End Method
+	
+	Method Kill:Void()
+		Super.Kill()
+		hole.Make(-1, -1)
+		allowCollisions = FlxObject.ANY
+	End Method
 
 End Class

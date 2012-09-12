@@ -37,13 +37,19 @@ Public
 	
 	Method OpenNextModule:Void()
 		_instructions[_mark].visible = True
+		
 		If (_moduleNames[_mark].Length() > 0) Then
-			Console.GetInstance().Push("Module " + _moduleNames[_mark] + " was added")
-			Console.GetInstance().Push("see RTFM")
 			listener.OnModuleAdded(_mark)
 		End If
 		
 		_mark += 1
+	End Method
+	
+	Method NextModuleInfo:Void()
+		If (_moduleNames[_mark].Length() > 0) Then
+			Console.GetInstance().Push("Module " + _moduleNames[_mark] + " was added")
+			Console.GetInstance().Push("see RTFM")
+		End If
 	End Method
 	
 	Method Reset:Void()

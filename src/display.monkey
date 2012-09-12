@@ -157,7 +157,7 @@ Public
 			Return
 		End If
 		
-		If (levelMap.programStack.IsComplete()) Then
+		If ( Not _fadeTween.active And levelMap.programStack.IsComplete()) Then
 			context.layout.runButton.Checked = False
 		
 			If (levelMap.programStack.HasError()) Then
@@ -179,7 +179,13 @@ Public
 					
 				ElseIf( Not isValid And Not _errorOccured)
 					Console.GetInstance().Push("Stage failed")
-					Console.GetInstance().Push("Target was not reached")
+					
+					If ( Not levelMap.ChipIsMissed()) Then
+						Console.GetInstance().Push("Target was not reached")
+					Else
+						Console.GetInstance().Push("Chip was missed")
+					End If
+					
 					_errorOccured = True
 				End If
 				
