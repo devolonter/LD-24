@@ -1,7 +1,25 @@
+html {
+	height: 100%;
+}
+
 body{
+	font-family: Arial, sans-serif;
 	padding:0px;
 	margin:0px;
-	background: #686868;
+	background: #4C4C4C no-repeat;
+	background-image: linear-gradient(top, #969696 0%, #4C4C4C 100%);
+	background-image: -o-linear-gradient(top, #969696 0%, #4C4C4C 100%);
+	background-image: -moz-linear-gradient(top, #969696 0%, #4C4C4C 100%);
+	background-image: -webkit-linear-gradient(top, #969696 0%, #4C4C4C 100%);
+	background-image: -ms-linear-gradient(top, #969696 0%, #4C4C4C 100%);
+	background-image: -webkit-gradient(
+		linear,
+		left top,
+		left bottom,
+		color-stop(0, #969696),
+		color-stop(1, #4C4C4C)
+	);
+	height: 100%;
 }
 
 canvas:focus{
@@ -11,10 +29,12 @@ canvas:focus{
 h1 {
 	text-align: center;
 	font-family: 'Passion One', sans-serif;
-	text-shadow: #E3E2D7 0 1px;
-	color: #B9B6A7;
+	text-shadow: #ccc 0 2px;
+	color: #222;
 	font-size: 80px;
 	text-transform: uppercase;
+	margin-top: 0;
+	padding-top: 30px;
 }
 
 #GameConsole {
@@ -52,4 +72,22 @@ h1 {
 	margin: 0;
 	position: relative;
 	z-index: 1;
+}
+
+#description {
+	width: 640px;
+	margin: 0 auto;
+	color: #ccc;
+	font-size: 14px;
+	text-shadow: #000 0 1px;
+}
+
+#description h3 {
+	text-align: center;
+	font-family: 'Passion One', sans-serif;
+	text-shadow: #aaa 0 1px;
+	color: #222;
+	font-size: 36px;
+	text-transform: uppercase;
+	margin: 0 0 15px 0;
 }
