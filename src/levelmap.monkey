@@ -160,14 +160,13 @@ Public
 				box = Box(_boxes.Recycle(ClassInfo(Box.ClassObject)))
 				box.LoadGraphic(Assets.SPRITE_BOX)
 				
-				box.width -= 2
-				box.height -= 2
-				box.offset.x = 1
-				box.offset.y = 1
-				
 				box.ID = _BOX_ID
 				box.active = False
-				box.Reset(tilesCoord.Get(offset).x + 1, tilesCoord.Get(offset).y + 1)
+				box.Reset(tilesCoord.Get(offset).x, tilesCoord.Get(offset).y)
+				
+				box.width -= 2
+				box.height -= 2
+				box.CenterOffsets(True)
 				
 				offset += 1
 			Next

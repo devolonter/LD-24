@@ -24,6 +24,10 @@ Private
 Public
 	Method New(context:Player)
 		_context = context
+		Reset()
+	End Method
+	
+	Method Reset:Void()
 		_modules = New StringMap<RobotModule>
 		_mark = 0
 		_complete = False
@@ -46,8 +50,6 @@ Public
 		_commands = program.Split(";")
 		Console.GetInstance().Empty()
 		
-		_context.Run()
-		
 		If ( Not ExecNext()) Then
 			_complete = True
 			_hasError = True
@@ -61,7 +63,6 @@ Public
 		_mark += 1
 		
 		If (_commands.Length() = _mark) Then
-			_context.Stop()
 			_complete = True
 			_mark = 0
 			Return
@@ -75,12 +76,10 @@ Public
 	
 	Method ExecNext:Bool()
 		If (_complete) Then
-			_context.Stop()
 			Return False
 		End If
 		
 		If (_commands[_mark].Length() <> 3) Then
-			_context.Stop()
 			_reason = "Unknown command: " + _commands[_mark].Length()
 			Return False
 		End If
@@ -91,7 +90,6 @@ Public
 		Console.GetInstance().Push("Exec " + _commands[_mark] + "...")
 		
 		If (execMod = Null) Then
-			_context.Stop()
 			_reason = "Unknown command: " + cmd
 			Return False
 		End If
@@ -100,8 +98,6 @@ Public
 	End Method
 	
 	Method Stop:Void(reason:String = "")
-		_context.Stop()
-	
 		If (HasTween()) ClearTweens()
 		_complete = True
 		If (reason.Length() <> 0) Then

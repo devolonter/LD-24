@@ -45,6 +45,14 @@ Public
 		
 		_mark += 1
 	End Method
+	
+	Method Reset:Void()
+		For Local i:Int = 3 Until Game.CHIPS_COUNT
+			_instructions[i].visible = False
+		Next
+		
+		_mark = 3
+	End Method
 
 End Class
 

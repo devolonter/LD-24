@@ -66,14 +66,18 @@ Public
 		_caret = New Caret(x, y, _charWidth, _charHeight)
 		Add(_caret)
 		
+		_memoryLimit = _MEMORY_LIMIT
+		
+		Reset()
+	End Method
+	
+	Method Reset:Void()
 		_availableCommands = New StringSet()
 		_availableChars = New StringSet()
 		
 		For Local i:Int = 1 To 9
 			_availableChars.Insert(i)
 		Next
-		
-		_memoryLimit = _MEMORY_LIMIT
 	End Method
 	
 	Method Update:Void()

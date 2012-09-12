@@ -48,6 +48,8 @@ Private
 	
 	Field _introText:FlxText
 	
+	Field _introSprite:FlxSprite
+	
 	Field _introTween:NumTween
 	
 	Field _isIntro:Bool
@@ -71,14 +73,14 @@ Public
 		
 		_intro = New FlxGroup(2)
 		
-		Local sp:FlxSprite = New FlxSprite(0, 0)
-		sp.LoadGraphic(Assets.SPRITE_INTRO, True,, 157, 136)
-		sp.AddAnimation("unbox",[0, 1, 2], 1)
-		sp.Reset( (width - sp.width) * 0.5, (height * 0.85 - sp.height) * 0.5)
-		sp.Play("unbox")
-		_intro.Add(sp)
+		_introSprite = New FlxSprite(0, 0)
+		_introSprite.LoadGraphic(Assets.SPRITE_INTRO, True,, 157, 136)
+		_introSprite.AddAnimation("unbox",[0, 1, 2], 1)
+		_introSprite.Reset( (width - _introSprite.width) * 0.5, (height * 0.85 - _introSprite.height) * 0.5)
+		_introSprite.Play("unbox")
+		_intro.Add(_introSprite)
 		
-		_introText = New FlxText(0, sp.y + sp.height + 50, width, "PRESS ENTER TO START")
+		_introText = New FlxText(0, _introSprite.y + _introSprite.height + 50, width, "PRESS ENTER TO START")
 		_introText.SetFormat(Assets.FONT_PROFONT, 18,, FlxText.ALIGN_CENTER)
 		_intro.Add(_introText)
 		
@@ -112,6 +114,12 @@ Public
 		Add(_hertzLine)
 		
 		AddTween(New Alarm(6, Self), True)
+		help.listener = Self
+		_isIntro = True
+	End Method
+	
+	Method Init:Void()
+		_currentLevel = 1
 		
 		Local mfModule:MfModule = New MfModule()
 		codeEditor.AddModule(mfModule)
@@ -125,16 +133,8 @@ Public
 		codeEditor.AddModule(mlModule)
 		levelMap.programStack.AddModule(mlModule)
 		
-		help.listener = Self
-		_isIntro = True
-	End Method
-	
-	Method Init:Void()
-		_currentLevel = 4
 		levelMap.active = True
 		levelMap.LoadLevel(_currentLevel)
-		help.OpenNextModule()
-		help.OpenNextModule()
 	End Method
 	
 	Method Update:Void()
@@ -147,9 +147,7 @@ Public
 				FlxG.Play(Assets.SOUND_KEY)
 			
 				_isIntro = False
-				_intro.RemoveTween(_introTween, True)
 				_intro.Kill()
-				Remove(_intro, True)
 				_background.visible = False
 				
 				Init()
@@ -307,6 +305,29 @@ Private
 
 	Method OnTweenComplete:Void()
 		_display._currentLevel += 1
+		
+		If (_display._currentLevel > Game.LEVELS_COUNT) Then
+			_display._intro.ReviveAll()
+			
+			_display._introSprite.Play("unbox", True)
+			_display.levelMap.programStack.Reset()
+			_display.codeEditor.Reset()
+			_display.help.Reset()
+			
+			_display._isIntro = True
+			_display.codeEditor.Empty()
+			Console.GetInstance().Empty()
+			
+			Console.GetInstance().Push("All available tests")
+			Console.GetInstance().Push("were completed")
+			Console.GetInstance().Push("Codename E. was placed")
+			Console.GetInstance().Push("in standby mode")
+			Console.GetInstance().Push("You will be notified")
+			Console.GetInstance().Push("about New tests")
+			
+			Return
+		End If
+		
 		_display.levelMap.LoadLevel(_display._currentLevel)
 		_display.codeEditor.Empty()
 	

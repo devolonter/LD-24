@@ -132,7 +132,7 @@ Private
 		Return True
 	End Method
 	
-	Method OnTweenComplete:Void()
+	Method OnTweenComplete:Void()	
 		Local p:Player = _programStack.Context
 		p.angle Mod = 360
 	
@@ -254,12 +254,12 @@ Public
 		
 		_box.tween.Start()
 		tween.Start()
+
 		Return True
 	End Method
 	
 	Method OnTweenComplete:Void()
 		_box.active = False
-		_programStack.OnTweenComplete()
 	End Method
 	
 End Class
