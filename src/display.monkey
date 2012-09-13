@@ -80,7 +80,7 @@ Public
 		_introSprite.Play("unbox")
 		_intro.Add(_introSprite)
 		
-		_introText = New FlxText(0, _introSprite.y + _introSprite.height + 50, width, "PRESS ENTER TO START")
+		_introText = New FlxText(0, _introSprite.y + _introSprite.height + 50, width, "PRESS ANY KEY TO START")
 		_introText.SetFormat(Assets.FONT_PROFONT, 18,, FlxText.ALIGN_CENTER)
 		_intro.Add(_introText)
 		
@@ -143,7 +143,7 @@ Public
 		If (_isIntro) Then
 			_introText.Alpha = _introTween.value
 			
-			If (FlxG.Keys.JustPressed(KEY_ENTER)) Then
+			If (FlxG.Keys.Any() Or FlxG.Mouse.JustPressed()) Then
 				FlxG.Play(Assets.SOUND_KEY)
 			
 				_isIntro = False

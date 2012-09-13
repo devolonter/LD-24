@@ -68,7 +68,7 @@ h1 {
 	background-image: radial-gradient(ellipse farthest-corner at center, #212121 0%, rgba(104,104,104,0) 70%);
 }
 
-#GameCanvas {
+#GameCanvas, #gameFlashObject {
 	background: url(loading.png) no-repeat;
 	margin: 0;
 	position: relative;
